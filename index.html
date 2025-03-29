@@ -564,7 +564,54 @@
       flex: 1;
       padding: 5px;
     }
-    
+    /* أنماط أزرار التصويت */
+.reactions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.like-btn, .dislike-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.like-btn {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+}
+
+.dislike-btn {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.like-btn:hover {
+  background: rgba(46, 204, 113, 0.4);
+}
+
+.dislike-btn:hover {
+  background: rgba(231, 76, 60, 0.4);
+}
+
+.like-btn.active {
+  background: #2ecc71;
+  color: white;
+}
+
+.dislike-btn.active {
+  background: #e74c3c;
+  color: white;
+}
     @media (max-width: 600px) {
       .container {
         width: 350px;
@@ -706,12 +753,24 @@
            <div class="visitors-counter">
             <i class="fas fa-eye"></i>
             <span id="visitorCount">0</span> زائر
+              
+            <div class="reactions">
+              <button class="like-btn" id="likeBtn">
+                <i class="fas fa-thumbs-up"></i>
+                <span id="likeCount">0</span>
+              </button>
+              
+              <button class="dislike-btn" id="dislikeBtn">
+                <i class="fas fa-thumbs-down"></i>
+                <span id="dislikeCount">0</span>
+              </button>
+            </div>
           </div>
       </div>
     </div>
     <div class="ball-shadow"></div>
   </div>
-  
+
   <!-- لوحة التحكم المعدلة -->
   <div class="admin-panel" id="adminPanel">
     <h3>لوحة التحكم</h3>
@@ -1022,6 +1081,89 @@ function updateVisitorCount() {
 
 // استدعاء الدالة عند تحميل الصفحة
 window.addEventListener('DOMContentLoaded', updateVisitorCount);
+  
+  // نظام الإعجاب وعدم الإعجاب
+function setupReactions() {
+  // توليد معرف فريد للمستخدم
+  const userId = localStorage.getItem('userReactionId') || 
+                'user_' + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem('userReactionId', userId);
+
+  // تحميل بيانات التصويت
+  let reactionsData = JSON.parse(localStorage.getItem('reactionsData')) || {
+    likes: 0,
+    dislikes: 0,
+    likedBy: [],
+    dislikedBy: []
+  };
+
+  // تحديث العداد
+  function updateCounts() {
+    document.getElementById('likeCount').textContent = reactionsData.likes;
+    document.getElementById('dislikeCount').textContent = reactionsData.dislikes;
+    
+    // تحديث حالة الأزرار
+    if (reactionsData.likedBy.includes(userId)) {
+      document.getElementById('likeBtn').classList.add('active');
+      document.getElementById('dislikeBtn').classList.remove('active');
+    } else if (reactionsData.dislikedBy.includes(userId)) {
+      document.getElementById('dislikeBtn').classList.add('active');
+      document.getElementById('likeBtn').classList.remove('active');
+    } else {
+      document.getElementById('likeBtn').classList.remove('active');
+      document.getElementById('dislikeBtn').classList.remove('active');
+    }
+  }
+
+  // حدث زر الإعجاب
+  document.getElementById('likeBtn').addEventListener('click', () => {
+    if (reactionsData.likedBy.includes(userId)) {
+      // إزالة الإعجاب إذا كان معجبًا بالفعل
+      reactionsData.likes--;
+      reactionsData.likedBy = reactionsData.likedBy.filter(id => id !== userId);
+    } else {
+      // إزالة عدم الإعجاب إذا كان موجودًا
+      if (reactionsData.dislikedBy.includes(userId)) {
+        reactionsData.dislikes--;
+        reactionsData.dislikedBy = reactionsData.dislikedBy.filter(id => id !== userId);
+      }
+      // إضافة إعجاب جديد
+      reactionsData.likes++;
+      reactionsData.likedBy.push(userId);
+    }
+    
+    localStorage.setItem('reactionsData', JSON.stringify(reactionsData));
+    updateCounts();
+  });
+
+  // حدث زر عدم الإعجاب
+  document.getElementById('dislikeBtn').addEventListener('click', () => {
+    if (reactionsData.dislikedBy.includes(userId)) {
+      // إزالة عدم الإعجاب إذا كان غير معجب بالفعل
+      reactionsData.dislikes--;
+      reactionsData.dislikedBy = reactionsData.dislikedBy.filter(id => id !== userId);
+    } else {
+      // إزالة الإعجاب إذا كان موجودًا
+      if (reactionsData.likedBy.includes(userId)) {
+        reactionsData.likes--;
+        reactionsData.likedBy = reactionsData.likedBy.filter(id => id !== userId);
+      }
+      // إضافة عدم إعجاب جديد
+      reactionsData.dislikes++;
+      reactionsData.dislikedBy.push(userId);
+    }
+    
+    localStorage.setItem('reactionsData', JSON.stringify(reactionsData));
+    updateCounts();
+  });
+
+  // التهيئة الأولية
+  updateCounts();
+}
+
+// استدعاء الدالة عند تحميل الصفحة
+window.addEventListener('DOMContentLoaded', setupReactions); 
+
   </script>
 </body>
 </html>

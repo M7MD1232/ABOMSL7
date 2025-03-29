@@ -366,7 +366,63 @@
       font-size: 14px;
       margin-bottom: 8px;
     }
-    
+    /* إضافة أنماط الإحصائيات هنا */
+.stats-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.visitors-counter {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  border: 1px solid var(--secondary-color);
+}
+
+.like-section {
+  display: flex;
+  gap: 15px;
+}
+
+.like-btn, .dislike-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.like-btn {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+}
+
+.dislike-btn {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.like-btn:hover {
+  background: rgba(46, 204, 113, 0.4);
+}
+
+.dislike-btn:hover {
+  background: rgba(231, 76, 60, 0.4);
+}
     .glow-effect {
       position: absolute;
       width: 100%;
@@ -694,7 +750,24 @@
   <!-- لوحة التحكم المعدلة -->
   <div class="admin-panel" id="adminPanel">
     <h3>لوحة التحكم</h3>
+      <div class="stats-section">
+    <div class="visitors-counter">
+      <i class="fas fa-users"></i>
+      <span id="visitorsCount">0</span> زائر
+    </div>
     
+    <div class="like-section">
+      <button class="like-btn" id="likeBtn">
+        <i class="fas fa-thumbs-up"></i>
+        <span id="likeCount">0</span>
+      </button>
+      
+      <button class="dislike-btn" id="dislikeBtn">
+        <i class="fas fa-thumbs-down"></i>
+        <span id="dislikeCount">0</span>
+      </button>
+    </div>
+  </div>
     <div class="form-group">
       <label for="nameInput" style="color: #daca85; display: block; margin-bottom: 5px;">الاسم:</label>
       <input type="text" id="nameInput" class="admin-input" placeholder="أدخل الاسم الجديد">
@@ -977,6 +1050,72 @@
     container.addEventListener('touchstart', function() {
       container.classList.add('animated');
       setTimeout(() => container.classList.remove('animated'), 700);
+    });
+     // ==================== نظام عداد الزوار والإعجابات ====================
+    function loadStats() {
+      let visitors = localStorage.getItem('visitors');
+      if (!visitors) {
+        visitors = 1;
+      } else {
+        visitors = parseInt(visitors) + 1;
+      }
+      localStorage.setItem('visitors', visitors);
+      document.getElementById('visitorsCount').textContent = visitors;
+
+      const likesData = JSON.parse(localStorage.getItem('likesData')) || { 
+        likes: 0, 
+        dislikes: 0,
+        userVote: null 
+      };
+      
+      document.getElementById('likeCount').textContent = likesData.likes;
+      document.getElementById('dislikeCount').textContent = likesData.dislikes;
+
+      if (likesData.userVote === 'like') {
+        document.getElementById('likeBtn').style.background = 'rgba(46, 204, 113, 0.5)';
+      } else if (likesData.userVote === 'dislike') {
+        document.getElementById('dislikeBtn').style.background = 'rgba(231, 76, 60, 0.5)';
+      }
+
+      return likesData;
+    }
+
+    let likesData = loadStats();
+
+    document.getElementById('likeBtn').addEventListener('click', function() {
+      if (likesData.userVote === 'like') return;
+      
+      if (likesData.userVote === 'dislike') {
+        likesData.dislikes--;
+      }
+      
+      likesData.likes++;
+      likesData.userVote = 'like';
+      localStorage.setItem('likesData', JSON.stringify(likesData));
+      
+      document.getElementById('likeCount').textContent = likesData.likes;
+      document.getElementById('dislikeCount').textContent = likesData.dislikes;
+      
+      this.style.background = 'rgba(46, 204, 113, 0.5)';
+      document.getElementById('dislikeBtn').style.background = 'rgba(231, 76, 60, 0.2)';
+    });
+
+    document.getElementById('dislikeBtn').addEventListener('click', function() {
+      if (likesData.userVote === 'dislike') return;
+      
+      if (likesData.userVote === 'like') {
+        likesData.likes--;
+      }
+      
+      likesData.dislikes++;
+      likesData.userVote = 'dislike';
+      localStorage.setItem('likesData', JSON.stringify(likesData));
+      
+      document.getElementById('likeCount').textContent = likesData.likes;
+      document.getElementById('dislikeCount').textContent = likesData.dislikes;
+      
+      this.style.background = 'rgba(231, 76, 60, 0.5)';
+      document.getElementById('likeBtn').style.background = 'rgba(46, 204, 113, 0.2)';
     });
   </script>
 </body>

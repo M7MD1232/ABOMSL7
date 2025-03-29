@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة كرة السلة</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+    
+    :root {
+      --primary-color: #f0e1ba;
+      --secondary-color: #daca85;
+      --accent-color: #9b59b6;
+      --light-color: #ecf0f1;
+      --highlight: #fdfdfd;
+      --dark-overlay: rgba(255, 239, 187, 0.87);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      cursor: none !important;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    body {
+      font-family: 'Tajawal', sans-serif;
+      color: var(--light-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      background-image: url('msl7.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    
+    /* مؤشر الماوس المخصص */
+    #custom-cursor {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      background-image: url('hand-cursor.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 99999; /* أعلى قيمة z-index */
+      transition: transform 0.05s ease;
+    }
+    
+    #custom-cursor.hover {
+      background-image: url('hand-pointer.png');
+      transform: scale(1.2);
+    }
+    
+    #custom-cursor.click {
+      background-image: url('hand-click.png');
+      transform: scale(0.9);
+    }
+
+    /* شاشة تسجيل الدخول */
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+    
+    .login-box {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .login-box h2 {
+      color: var(--highlight);
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .login-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: 'Tajawal', sans-serif;
+      text-align: center;
+    }
+    
+    .login-button {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 18px;
+      font-family: 'Tajawal', sans-serif;
+      transition: background 0.3s;
+    }
+    
+    .login-button:hover {
+      background: #8e44ad;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      margin-top: 10px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    /* كرة السلة */
+    .basketball {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: url('basketball.png');
+      background-size: cover;
+      border-radius: 50%;
+      box-shadow: 0 5px 15px rgb(241, 214, 154);
+      user-select: none;
+      touch-action: manipulation;
+      z-index: 10;
+    }
+    
+
+    
+    
+    /* خط السحب والرمي */
+    .drag-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+      height: 3px;
+      transform-origin: 0 0;
+      pointer-events: none;
+      z-index: 8;
+      display: none;
+    }
+    
+    /* السلة */
+    .basketball-hoop {
+      position: absolute;
+      width: 200px;
+      height: 160px;
+      background-image: url('hoop.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 5;
+      transform: translateZ(0);
+      transition: all 0.5s ease;
+    }
+    
+    .hoop-target {
+      position: absolute;
+      width: 80px;
+      height: 10px;
+      top: 86px;
+      left: 60px;
+      background: rgba(255, 0, 0, 0);
+      z-index: 6;
+    }
+    
+    /* لوحة النقاط */
+    .score-board {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 24px;
+      z-index: 100;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    /* لوحة التصنيف */
+    .leaderboard {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      width: 250px;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 100;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .leaderboard h3 {
+      margin-bottom: 15px;
+      color: var(--highlight);
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 10px;
+    }
+    
+    .player-rank {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .player-rank.current-player {
+      background: rgba(155, 89, 182, 0.3);
+      font-weight: bold;
+    }
+    
+    .rank-number {
+      width: 30px;
+      text-align: center;
+    }
+    
+    .player-name {
+      flex-grow: 1;
+      text-align: right;
+      padding-right: 10px;
+    }
+    
+    .player-score {
+      width: 60px;
+      text-align: left;
+    }
+    
+    /* تأثير التسجيل */
+    .score-effect {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: gold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    
+    .score-effect.show {
+      animation: score-anim 1s forwards;
+    }
+    
+    @keyframes score-anim {
+      0% { opacity: 0; transform: translate(-50%, 0); }
+      20% { opacity: 1; transform: translate(-50%, -20px); }
+      80% { opacity: 1; transform: translate(-50%, -60px); }
+      100% { opacity: 0; transform: translate(-50%, -80px); }
+    }
+    
+    /* رسالة منع النقر الأيمن */
+    .right-click-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 99999;
+      display: none;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    /* زر تسجيل الخروج */
+    .logout-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(231, 76, 60, 0.8);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 100;
+      font-family: 'Tajawal', sans-serif;
+      display: none;
+    }
+    
+    .logout-button:hover {
+      background: rgba(231, 76, 60, 1);
+    }
+    
+    @media (max-width: 600px) {
+      .basketball {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .ball-shadow {
+        width: 60px;
+      }
+      
+      .basketball-hoop {
+        width: 150px;
+        height: 120px;
+      }
+      
+      .hoop-target {
+        width: 60px;
+        height: 10px;
+        top: 64px;
+        left: 45px;
+      }
+      
+      .score-board {
+        font-size: 18px;
+        padding: 8px 16px;
+      }
+      
+      .leaderboard {
+        width: 200px;
+        right: 10px;
+        top: 10px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <!-- مؤشر الماوس المخصص -->
+  <div id="custom-cursor"></div>
+
+  <!-- شاشة تسجيل الدخول -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <h2>أدخل اسم اللاعب</h2>
+      <input type="text" class="login-input" id="player-name" placeholder="اسم اللاعب" maxlength="15">
+      <button class="login-button" id="login-button">بدء اللعب</button>
+      <div class="error-message" id="error-message">هذا الاسم مستخدم بالفعل</div>
+    </div>
+  </div>
+
+  <!-- لوحة النقاط -->
+  <div class="score-board">النقاط: <span id="score">0</span></div>
+  
+  <!-- لوحة التصنيف -->
+  <div class="leaderboard" id="leaderboard">
+    <h3>أفضل اللاعبين</h3>
+    <div id="players-list"></div>
+  </div>
+  
+  <!-- السلة -->
+  <div class="basketball-hoop" id="basketball-hoop">
+    <div class="hoop-target" id="hoop-target"></div>
+  </div>
+  
+  <!-- الكرة -->
+  <div class="basketball" id="basketball"></div>
+  <div class="ball-shadow" id="ball-shadow"></div>
+  
+  <!-- خط السحب -->
+  <div class="drag-line" id="drag-line"></div>
+  
+  <!-- تأثير التسجيل -->
+  <div class="score-effect" id="score-effect">+2!</div>
+  
+  <!-- رسالة منع النقر الأيمن -->
+  <div class="right-click-message" id="right-click-message">
+    النقر الأيمن غير مسموح به في هذه اللعبة
+  </div>
+  
+  <!-- زر تسجيل الخروج -->
+  <button class="logout-button" id="logout-button">تسجيل الخروج</button>
+
+  <script>
+    // عناصر الصفحة
+    const basketball = document.getElementById('basketball');
+    const ballShadow = document.getElementById('ball-shadow');
+    const dragLine = document.getElementById('drag-line');
+    const hoopTarget = document.getElementById('hoop-target');
+    const basketballHoop = document.getElementById('basketball-hoop');
+    const customCursor = document.getElementById('custom-cursor');
+    const scoreElement = document.getElementById('score');
+    const scoreEffect = document.getElementById('score-effect');
+    const rightClickMessage = document.getElementById('right-click-message');
+    const loginScreen = document.getElementById('login-screen');
+    const playerNameInput = document.getElementById('player-name');
+    const loginButton = document.getElementById('login-button');
+    const errorMessage = document.getElementById('error-message');
+    const leaderboard = document.getElementById('leaderboard');
+    const playersList = document.getElementById('players-list');
+    const logoutButton = document.getElementById('logout-button');
+    
+    // متغيرات اللعبة
+    let score = 0;
+    let isDragging = false;
+    let startX, startY;
+    let ballX, ballY;
+    let velocityX = 0;
+    let velocityY = 0;
+    let gravity = 0.2;
+    let friction = 0.99;
+    let bounce = 0.7;
+    let isInHoop = false;
+    let gameStarted = false;
+    let currentPlayer = null;
+    let players = [];
+    
+    // أحجام العناصر
+    const ballSize = basketball.offsetWidth;
+    const hoopSize = basketballHoop.offsetWidth;
+    
+    // ==================== إعداد مؤشر الماوس المخصص ====================
+    
+    // تحديث موقع المؤشر المخصص
+    function updateCustomCursor(e) {
+      customCursor.style.left = e.clientX + 'px';
+      customCursor.style.top = e.clientY + 'px';
+      
+      // التحقق مما إذا كان المؤشر فوق عنصر قابل للنقر
+      const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+      
+      if (hoveredElement && (
+        hoveredElement === loginButton || 
+        hoveredElement === playerNameInput || 
+        hoveredElement === logoutButton ||
+        hoveredElement.closest('.player-rank') ||
+        hoveredElement === basketball
+      )) {
+        customCursor.classList.add('hover');
+      } else {
+        customCursor.classList.remove('hover');
+      }
+    }
+    
+    // أحداث حركة الماوس
+    document.addEventListener('mousemove', updateCustomCursor);
+    
+    // أحداث النقر
+    document.addEventListener('mousedown', function(e) {
+      if (e.button === 0) { // زر الماوس الأيسر فقط
+        customCursor.classList.add('click');
+      }
+    });
+    
+    document.addEventListener('mouseup', function(e) {
+      if (e.button === 0) { // زر الماوس الأيسر فقط
+        customCursor.classList.remove('click');
+      }
+    });
+    
+    // ==================== نظام اللاعبين ====================
+    
+    // تحميل بيانات اللاعبين من localStorage
+    function loadPlayers() {
+      const savedPlayers = localStorage.getItem('basketballPlayers');
+      if (savedPlayers) {
+        players = JSON.parse(savedPlayers);
+        updateLeaderboard();
+      }
+    }
+    
+    // حفظ بيانات اللاعبين في localStorage
+    function savePlayers() {
+      localStorage.setItem('basketballPlayers', JSON.stringify(players));
+    }
+    
+    // تحديث لوحة التصنيف
+    function updateLeaderboard() {
+      // ترتيب اللاعبين حسب النقاط (من الأعلى إلى الأقل)
+      const sortedPlayers = [...players].sort((a, b) => b.highScore - a.highScore);
+      
+      playersList.innerHTML = '';
+      
+      sortedPlayers.slice(0, 10).forEach((player, index) => {
+        const playerElement = document.createElement('div');
+        playerElement.className = `player-rank ${currentPlayer && player.name === currentPlayer.name ? 'current-player' : ''}`;
+        playerElement.innerHTML = `
+          <div class="rank-number">${index + 1}</div>
+          <div class="player-name">${player.name}</div>
+          <div class="player-score">${player.highScore}</div>
+        `;
+        playersList.appendChild(playerElement);
+      });
+    }
+    
+    // إضافة أو تحديث لاعب
+    function addOrUpdatePlayer(name, newScore) {
+      let player = players.find(p => p.name === name);
+      
+      if (player) {
+        // تحديث النقاط إذا كانت أعلى
+        if (newScore > player.highScore) {
+          player.highScore = newScore;
+          savePlayers();
+          updateLeaderboard();
+        }
+      } else {
+        // إضافة لاعب جديد
+        player = { name, highScore: newScore };
+        players.push(player);
+        savePlayers();
+        updateLeaderboard();
+      }
+      
+      return player;
+    }
+    
+    // ==================== تسجيل الدخول والخروج ====================
+    
+    // عند تحميل الصفحة، تحقق إذا كان هناك لاعب مسجل مسبقاً
+    window.addEventListener('load', function() {
+      loadPlayers();
+      
+      // تحقق من وجود لاعب مسجل في localStorage
+      const savedPlayer = localStorage.getItem('currentBasketballPlayer');
+      if (savedPlayer) {
+        currentPlayer = JSON.parse(savedPlayer);
+        
+        // تحقق إذا كان اللاعب موجوداً في قائمة اللاعبين
+        const existingPlayer = players.find(p => p.name === currentPlayer.name);
+        if (existingPlayer) {
+          // تخطي شاشة تسجيل الدخول وابدأ اللعبة مباشرة
+          loginScreen.style.display = 'none';
+          logoutButton.style.display = 'block';
+          initGame();
+          return;
+        }
+      }
+      
+      // إذا لم يكن هناك لاعب مسجل، عرض شاشة تسجيل الدخول
+      loginScreen.style.display = 'flex';
+    });
+
+    // تعديل وظيفة تسجيل الدخول
+    loginButton.addEventListener('click', function() {
+      const playerName = playerNameInput.value.trim();
+      
+      if (playerName.length < 2) {
+        errorMessage.textContent = 'الاسم يجب أن يكون على الأقل حرفين';
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      // تحقق إذا كان الاسم مستخدمًا بالفعل
+      const nameExists = players.some(p => p.name.toLowerCase() === playerName.toLowerCase());
+      
+      if (nameExists) {
+        errorMessage.textContent = 'هذا الاسم مستخدم بالفعل';
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      // تسجيل الدخول الناجح
+      currentPlayer = { name: playerName, highScore: 0 };
+      
+      // حفظ اللاعب الحالي في localStorage
+      localStorage.setItem('currentBasketballPlayer', JSON.stringify(currentPlayer));
+      
+      // إظهار زر تسجيل الخروج
+      logoutButton.style.display = 'block';
+      
+      loginScreen.style.display = 'none';
+      initGame();
+    });
+
+    // إضافة وظيفة تسجيل الخروج
+    logoutButton.addEventListener('click', function() {
+      // حذف اللاعب الحالي من localStorage
+      localStorage.removeItem('currentBasketballPlayer');
+      
+      // إخفاء زر تسجيل الخروج
+      this.style.display = 'none';
+      
+      // إعادة تعيين اللاعب الحالي
+      currentPlayer = null;
+      
+      // إعادة عرض شاشة تسجيل الدخول
+      loginScreen.style.display = 'flex';
+      playerNameInput.value = '';
+      errorMessage.style.display = 'none';
+      
+      // إيقاف اللعبة إذا كانت تعمل
+      gameStarted = false;
+    });
+
+    // ==================== منطق اللعبة ====================
+    
+    // وضع البداية
+    function initGame() {
+      gameStarted = true;
+      score = 0;
+      scoreElement.textContent = score;
+      
+      // وضع الكرة في المركز
+      ballX = window.innerWidth / 2 - ballSize / 2;
+      ballY = window.innerHeight / 2 - ballSize / 2;
+      
+      basketball.style.left = ballX + 'px';
+      basketball.style.top = ballY + 'px';
+      
+      // وضع السلة في موقع عشوائي
+      placeHoop();
+      
+      // إعادة تعيين السرعة
+      velocityX = 0;
+      velocityY = 0;
+      
+      // تحديث الظل
+      updateShadow();
+    }
+    
+    // وضع السلة في موقع جديد
+    function placeHoop() {
+      // وضع السلة في مكان عشوائي ولكن ليس قريبًا جدًا من الحواف
+      const minX = hoopSize / 2;
+      const maxX = window.innerWidth - hoopSize;
+      const minY = 100;
+      const maxY = window.innerHeight / 2;
+      
+      const randomX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+      const randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+      
+      basketballHoop.style.right = 'auto';
+      basketballHoop.style.left = randomX + 'px';
+      basketballHoop.style.top = randomY + 'px';
+    }
+    
+    // تحديث ظل الكرة بناءً على ارتفاعها
+    function updateShadow() {
+      const shadowY = ballY + ballSize;
+      const shadowSize = 1 - Math.min(Math.abs(velocityY) * 0.01, 0.5);
+      const shadowOpacity = 0.6 - Math.min(Math.abs(velocityY) * 0.01, 0.3);
+      
+      ballShadow.style.left = ballX + 'px';
+      ballShadow.style.top = shadowY + 'px';
+      ballShadow.style.transform = `scale(${shadowSize}, ${shadowSize * 0.3})`;
+      ballShadow.style.opacity = shadowOpacity;
+    }
+    
+    // تحديث موقع الكرة
+    function updateBallPosition() {
+      // تطبيق الجاذبية
+      velocityY += gravity;
+      
+      // تطبيق الاحتكاك
+      velocityX *= friction;
+      velocityY *= friction;
+      
+      // تحديث الموقع
+      ballX += velocityX;
+      ballY += velocityY;
+      
+      // حدود الشاشة
+      if (ballX < 0) {
+        ballX = 0;
+        velocityX *= -bounce;
+      }
+      if (ballX > window.innerWidth - ballSize) {
+        ballX = window.innerWidth - ballSize;
+        velocityX *= -bounce;
+      }
+      
+      if (ballY < 0) {
+        ballY = 0;
+        velocityY *= -bounce;
+      }
+      
+      // الأرضية
+      if (ballY > window.innerHeight - ballSize) {
+        ballY = window.innerHeight - ballSize;
+        velocityY *= -bounce;
+        velocityX *= 0.9;
+      }
+      
+      // تطبيق الموقع الجديد
+      basketball.style.left = ballX + 'px';
+      basketball.style.top = ballY + 'px';
+      
+      // تحديث الظل
+      updateShadow();
+      
+      // التحقق من دخول الكرة في السلة
+      checkHoopCollision();
+    }
+    
+    // التحقق من اصطدام الكرة بالسلة
+    function checkHoopCollision() {
+      const ballRect = basketball.getBoundingClientRect();
+      const hoopRect = hoopTarget.getBoundingClientRect();
+      
+      // التحقق من التداخل
+      if (
+        ballRect.right > hoopRect.left &&
+        ballRect.left < hoopRect.right &&
+        ballRect.bottom > hoopRect.top &&
+        ballRect.top < hoopRect.bottom
+      ) {
+        // التأكد من أن الكرة تسقط من الأعلى
+        if (velocityY > 0 && !isInHoop) {
+          isInHoop = true;
+          addScore(2);
+          
+          // إعادة تعيين الكرة بعد تأخير
+          setTimeout(() => {
+            resetBall();
+            placeHoop();
+            isInHoop = false;
+          }, 1000);
+        }
+      }
+    }
+    
+    // إعادة تعيين الكرة إلى المركز
+    function resetBall() {
+      ballX = window.innerWidth / 2 - ballSize / 2;
+      ballY = window.innerHeight / 2 - ballSize / 2;
+      basketball.style.left = ballX + 'px';
+      basketball.style.top = ballY + 'px';
+      velocityX = 0;
+      velocityY = 0;
+    }
+    
+    // إضافة النقاط
+    function addScore(points) {
+      score += points;
+      scoreElement.textContent = score;
+      
+      // تحديث أعلى نقاط للاعب الحالي
+      if (currentPlayer) {
+        currentPlayer = addOrUpdatePlayer(currentPlayer.name, score);
+      }
+      
+      // عرض تأثير النقاط
+      scoreEffect.textContent = `+${points}!`;
+      scoreEffect.classList.add('show');
+      
+      setTimeout(() => {
+        scoreEffect.classList.remove('show');
+      }, 1000);
+    }
+    
+    // ==================== أحداث الماوس واللمس ====================
+    
+    // بدء السحب
+    function startDrag(e) {
+      e.preventDefault();
+      
+      // الحصول على موقع البداية
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      
+      const ballRect = basketball.getBoundingClientRect();
+      const ballCenterX = ballRect.left + ballSize / 2;
+      const ballCenterY = ballRect.top + ballSize / 2;
+      
+      // التحقق من أن النقر كان على الكرة
+      const distance = Math.sqrt(
+        Math.pow(clientX - ballCenterX, 2) + 
+        Math.pow(clientY - ballCenterY, 2)
+      );
+      
+      if (distance < ballSize / 2) {
+        isDragging = true;
+        startX = clientX;
+        startY = clientY;
+        
+        // إظهار خط السحب
+        dragLine.style.display = 'block';
+        updateDragLine(clientX, clientY);
+      }
+    }
+    
+    // أثناء السحب
+    function drag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      
+      updateDragLine(clientX, clientY);
+    }
+    
+    // إنهاء السحب (الرمي)
+    function endDrag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      
+      const clientX = e.clientX || (e.changedTouches ? e.changedTouches[0].clientX : 0);
+      const clientY = e.clientY || (e.changedTouches ? e.changedTouches[0].clientY : 0);
+      
+      // حساب السرعة بناءً على المسافة من مركز الكرة
+      const ballRect = basketball.getBoundingClientRect();
+      const ballCenterX = ballRect.left + ballSize / 2;
+      const ballCenterY = ballRect.top + ballSize / 2;
+      
+      // حساب متجه السرعة (عكس اتجاه السحب)
+      velocityX = (ballCenterX - clientX) * 0.1;
+      velocityY = (ballCenterY - clientY) * 0.1;
+      
+      // إخفاء خط السحب
+      dragLine.style.display = 'none';
+      isDragging = false;
+    }
+    
+    // تحديث خط السحب
+    function updateDragLine(endX, endY) {
+      const ballRect = basketball.getBoundingClientRect();
+      const ballCenterX = ballRect.left + ballSize / 2;
+      const ballCenterY = ballRect.top + ballSize / 2;
+      
+      // حساب طول الخط وزاويته
+      const dx = ballCenterX - endX;
+      const dy = ballCenterY - endY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx);
+      
+      // تحديث خط السحب
+      dragLine.style.width = distance + 'px';
+      dragLine.style.left = ballCenterX + 'px';
+      dragLine.style.top = ballCenterY + 'px';
+      dragLine.style.transform = `rotate(${angle}rad)`;
+      
+      // تغيير لون الخط بناءً على القوة
+      const power = Math.min(distance / 100, 1);
+      const red = Math.floor(power * 255);
+      const green = Math.floor((1 - power) * 255);
+      dragLine.style.background = `rgba(${red}, ${green}, 0, 0.7)`;
+    }
+    
+    // ==================== منع النسخ والنقر الأيمن ====================
+    
+    // منع النقر الأيمن
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      showRightClickMessage();
+      return false;
+    });
+    
+    // منع اختيار النص والسحب
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+    
+    // منع نسخ النص
+    document.addEventListener('copy', function(e) {
+      e.preventDefault();
+      return false;
+    });
+    
+    // منع القص
+    document.addEventListener('cut', function(e) {
+      e.preventDefault();
+      return false;
+    });
+    
+    // منع السحب والإفلات
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+    
+    // عرض رسالة منع النقر الأيمن
+    function showRightClickMessage() {
+      rightClickMessage.style.display = 'block';
+      setTimeout(() => {
+        rightClickMessage.style.display = 'none';
+      }, 2000);
+    }
+    
+    // ==================== أحداث اللمس ====================
+    basketball.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('touchmove', drag, { passive: false });
+    document.addEventListener('touchend', endDrag, { passive: false });
+    
+    // ==================== أحداث الماوس ====================
+    basketball.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', endDrag);
+    
+    // حلقة اللعبة
+    function gameLoop() {
+      if (gameStarted && !isDragging && !isInHoop) {
+        updateBallPosition();
+      }
+      requestAnimationFrame(gameLoop);
+    }
+    
+    // بدء حلقة اللعبة
+    gameLoop();
+    
+    // تعديل حجم العناصر عند تغيير حجم النافذة
+    window.addEventListener('resize', function() {
+      if (!isDragging) {
+        ballX = Math.min(ballX, window.innerWidth - ballSize);
+        ballY = Math.min(ballY, window.innerHeight - ballSize);
+        basketball.style.left = ballX + 'px';
+        basketball.style.top = ballY + 'px';
+      }
+      placeHoop();
+    });
+  </script>
+</body>
+</html>

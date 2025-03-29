@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ِABOMSL7</title>
+  <title>الموقع الشخصي الدائري</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
     
@@ -367,72 +367,6 @@
       margin-bottom: 8px;
     }
     
-    /* إضافة أنماط الإحصائيات هنا */
-    .stats-section {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      width: 100%;
-    }
-
-    .visitors-counter {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 8px 15px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      border: 1px solid var(--secondary-color);
-    }
-
-    .like-section {
-      display: flex;
-      gap: 15px;
-    }
-
-    .like-btn, .dislike-btn {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 14px;
-    }
-
-    .like-btn {
-      background: rgba(46, 204, 113, 0.2);
-      color: #2ecc71;
-      border: 1px solid #2ecc71;
-    }
-
-    .dislike-btn {
-      background: rgba(231, 76, 60, 0.2);
-      color: #e74c3c;
-      border: 1px solid #e74c3c;
-    }
-
-    .like-btn:hover {
-      background: rgba(46, 204, 113, 0.4);
-    }
-
-    .dislike-btn:hover {
-      background: rgba(231, 76, 60, 0.4);
-    }
-
-    .like-btn.active {
-      background: rgba(46, 204, 113, 0.6);
-    }
-
-    .dislike-btn.active {
-      background: rgba(231, 76, 60, 0.6);
-    }
-    
     .glow-effect {
       position: absolute;
       width: 100%;
@@ -752,26 +686,6 @@
             مرحباً، أنا محمد مصلح.شغفي هو التكنلوجيا وعالم البرمجه وأسعى دائماً لتطوير مهاراتي.
           </p>
         </div>
-
-        <!-- إضافة قسم الإحصائيات هنا -->
-        <div class="stats-section">
-          <div class="visitors-counter">
-            <i class="fas fa-users"></i>
-            <span id="visitorsCount">0</span> زائر
-          </div>
-          
-          <div class="like-section">
-            <button class="like-btn" id="likeBtn">
-              <i class="fas fa-thumbs-up"></i>
-              <span id="likeCount">0</span>
-            </button>
-            
-            <button class="dislike-btn" id="dislikeBtn">
-              <i class="fas fa-thumbs-down"></i>
-              <span id="dislikeCount">0</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
     <div class="ball-shadow"></div>
@@ -832,365 +746,238 @@
     const profileName = document.querySelector('.profile-name');
     const aboutText = document.querySelector('.about-me p');
 
-    // ==================== نظام عداد الزوار والإعجابات ====================
-    function generateVisitorId() {
-      // إنشاء معرف فريد للزائر باستخدام الوقت الحالي وبعض الأرقام العشوائية
-      return 'visitor_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
-    }
-
-    function getVisitorId() {
-      let visitorId = localStorage.getItem('visitorId');
-      if (!visitorId) {
-        visitorId = generateVisitorId();
-        localStorage.setItem('visitorId', visitorId);
+    // ==================== نظام التحكم السري ====================
+    document.addEventListener('keydown', (e) => {
+      keySequence.push(e.key.toLowerCase());
+      if (keySequence.length > ADMIN_PASSWORD.length) {
+        keySequence.shift();
       }
-      return visitorId;
-    }
-
-    function loadStats() {
-      // تحميل عدد الزوار
-      let visitors = localStorage.getItem('visitors');
-      if (!visitors) {
-        visitors = 1;
-      } else {
-        visitors = parseInt(visitors) + 1;
-      }
-      localStorage.setItem('visitors', visitors);
-      document.getElementById('visitorsCount').textContent = visitors;
-
-      // تحميل بيانات الإعجابات
-      let likesData = JSON.parse(localStorage.getItem('likesData')) || {
-        likes: 0,
-        dislikes: 0,
-        likedBy: [],
-        dislikedBy: []
-      };
-
-      document.getElementById('likeCount').textContent = likesData.likes;
-      document.getElementById('dislikeCount').textContent = likesData.dislikes;
-
-      // التحقق من تصويت الزائر الحالي
-      const visitorId = getVisitorId();
-      const likeBtn = document.getElementById('likeBtn');
-      const dislikeBtn = document.getElementById('dislikeBtn');
-
-      if (likesData.likedBy.includes(visitorId)) {
-        likeBtn.classList.add('active');
-      } else if (likesData.dislikedBy.includes(visitorId)) {
-        dislikeBtn.classList.add('active');
-      }
-
-      return likesData;
-    }
-
-    let likesData = loadStats();
-
-    function updateLikeStatus() {
-      const visitorId = getVisitorId();
-      const likeBtn = document.getElementById('likeBtn');
-      const dislikeBtn = document.getElementById('dislikeBtn');
-
-      // تحديث حالة الأزرار
-      if (likesData.likedBy.includes(visitorId)) {
-        likeBtn.classList.add('active');
-        dislikeBtn.classList.remove('active');
-      } else if (likesData.dislikedBy.includes(visitorId)) {
-        dislikeBtn.classList.add('active');
-        likeBtn.classList.remove('active');
-      } else {
-        likeBtn.classList.remove('active');
-        dislikeBtn.classList.remove('active');
-      }
-
-      // تحديث العداد
-      document.getElementById('likeCount').textContent = likesData.likes;
-      document.getElementById('dislikeCount').textContent = likesData.dislikes;
-    }
-
-    document.getElementById('likeBtn').addEventListener('click', function() {
-      const visitorId = getVisitorId();
       
-      // إذا كان الزائر قد أعجب بالفعل
-      if (likesData.likedBy.includes(visitorId)) {
-        // إزالة الإعجاب
-        likesData.likes--;
-        likesData.likedBy = likesData.likedBy.filter(id => id !== visitorId);
-      } 
-      // إذا كان الزائر قد أعجب بعدم الإعجاب
-      else if (likesData.dislikedBy.includes(visitorId)) {
-        // إزالة عدم الإعجاب وإضافة الإعجاب
-        likesData.dislikes--;
-        likesData.dislikedBy = likesData.dislikedBy.filter(id => id !== visitorId);
-        likesData.likes++;
-        likesData.likedBy.push(visitorId);
+      if (keySequence.join('') === ADMIN_PASSWORD) {
+        activateAdminMode();
+        keySequence = [];
       }
-      // إذا كان الزائر لم يصوت من قبل
-      else {
-        // إضافة الإعجاب
-        likesData.likes++;
-        likesData.likedBy.push(visitorId);
-      }
-
-      localStorage.setItem('likesData', JSON.stringify(likesData));
-      updateLikeStatus();
     });
 
-    document.getElementById('dislikeBtn').addEventListener('click', function() {
-      const visitorId = getVisitorId();
+    // تفعيل وضع المدير
+    function activateAdminMode() {
+      isAdmin = true;
+      document.body.classList.add('edit-mode');
+      adminPanel.style.display = 'block';
       
-      // إذا كان الزائر قد أعجب بعدم الإعجاب بالفعل
-      if (likesData.dislikedBy.includes(visitorId)) {
-        // إزالة عدم الإعجاب
-        likesData.dislikes--;
-        likesData.dislikedBy = likesData.dislikedBy.filter(id => id !== visitorId);
-      } 
-      // إذا كان الزائر قد أعجب بالإعجاب
-      else if (likesData.likedBy.includes(visitorId)) {
-        // إزالة الإعجاب وإضافة عدم الإعجاب
-        likesData.likes--;
-        likesData.likedBy = likesData.likedBy.filter(id => id !== visitorId);
-        likesData.dislikes++;
-        likesData.dislikedBy.push(visitorId);
-      }
-      // إذا كان الزائر لم يصوت من قبل
-      else {
-        // إضافة عدم الإعجاب
-        likesData.dislikes++;
-        likesData.dislikedBy.push(visitorId);
-      }
+      // تحميل البيانات الحالية للتعديل
+      nameInput.value = profileName.textContent;
+      aboutInput.value = aboutText.textContent;
+      
+      // تحميل روابط التواصل الحالية للتعديل
+      loadSocialLinksForEditing();
+    }
 
-      localStorage.setItem('likesData', JSON.stringify(likesData));
-      updateLikeStatus();
+    // تعطيل وضع المدير
+    function deactivateAdminMode() {
+      isAdmin = false;
+      document.body.classList.remove('edit-mode');
+      adminPanel.style.display = 'none';
+    }
+
+    // تحميل روابط التواصل للتعديل
+    function loadSocialLinksForEditing() {
+      socialLinksContainer.innerHTML = '';
+      
+      document.querySelectorAll('.social-icon').forEach((icon, index) => {
+        const platform = icon.querySelector('i').className.split(' ')[1];
+        const url = icon.href;
+        
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'social-link-item';
+        linkDiv.innerHTML = `
+          <select class="social-input platform-select" data-index="${index}">
+            <option value="fab fa-twitter" ${platform === 'fa-twitter' ? 'selected' : ''}>تويتر</option>
+            <option value="fab fa-instagram" ${platform === 'fa-instagram' ? 'selected' : ''}>إنستغرام</option>
+            <option value="fab fa-discord" ${platform === 'fa-discord' ? 'selected' : ''}>ديسكورد</option>
+            <option value="fab fa-youtube" ${platform === 'fa-youtube' ? 'selected' : ''}>يوتيوب</option>
+            <option value="fab fa-facebook" ${platform === 'fa-facebook' ? 'selected' : ''}>فيسبوك</option>
+            <option value="fab fa-tiktok" ${platform === 'fa-tiktok' ? 'selected' : ''}>تيك توك</option>
+            <option value="fab fa-snapchat" ${platform === 'fa-snapchat' ? 'selected' : ''}>سناب شات</option>
+            <option value="fab fa-linkedin" ${platform === 'fa-linkedin' ? 'selected' : ''}>لينكدإن</option>
+            <option value="fab fa-github" ${platform === 'fa-github' ? 'selected' : ''}>جيت هاب</option>
+            <option value="fab fa-whatsapp" ${platform === 'fa-whatsapp' ? 'selected' : ''}>واتساب</option>
+            <option value="fab fa-telegram" ${platform === 'fa-telegram' ? 'selected' : ''}>تلغرام</option>
+            <option value="fab fa-reddit" ${platform === 'fa-reddit' ? 'selected' : ''}>ريديت</option>
+            <option value="fab fa-pinterest" ${platform === 'fa-pinterest' ? 'selected' : ''}>بينتريست</option>
+          </select>
+          <input type="text" class="social-input url-input" value="${url}" placeholder="رابط المنصة" data-index="${index}">
+          <div class="link-controls">
+            <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
+              <i class="fas fa-trash"></i> حذف
+            </button>
+          </div>
+        `;
+        
+        socialLinksContainer.appendChild(linkDiv);
+      });
+    }
+
+    // حذف رابط تواصل
+    function removeSocialLink(button) {
+      const linkItem = button.closest('.social-link-item');
+      linkItem.remove();
+    }
+
+    // حفظ التغييرات
+    saveBtn.addEventListener('click', () => {
+      // تحديث الاسم والنبذة
+      profileName.textContent = nameInput.value;
+      aboutText.textContent = aboutInput.value;
+      
+      // مسح روابط التواصل القديمة
+      socialIcons.innerHTML = '';
+      
+      // إضافة روابط التواصل الجديدة
+      document.querySelectorAll('#socialLinksContainer .social-link-item').forEach(linkItem => {
+        const platform = linkItem.querySelector('.platform-select').value;
+        const url = linkItem.querySelector('.url-input').value;
+        
+        if (url) {
+          const newIcon = document.createElement('a');
+          newIcon.className = 'social-icon';
+          newIcon.href = url;
+          newIcon.target = '_blank';
+          newIcon.setAttribute('data-hover', 'true');
+          newIcon.innerHTML = `<i class="${platform}"></i>`;
+          socialIcons.appendChild(newIcon);
+        }
+      });
+      
+      alert('تم حفظ التغييرات بنجاح!');
+      deactivateAdminMode();
     });
-// ==================== نظام التحكم السري ====================
-document.addEventListener('keydown', (e) => {
-  keySequence.push(e.key.toLowerCase());
-  if (keySequence.length > ADMIN_PASSWORD.length) {
-    keySequence.shift();
-  }
-  
-  if (keySequence.join('') === ADMIN_PASSWORD) {
-    activateAdminMode();
-    keySequence = [];
-  }
-});
 
-// تفعيل وضع المدير
-function activateAdminMode() {
-  isAdmin = true;
-  document.body.classList.add('edit-mode');
-  adminPanel.style.display = 'block';
-  
-  // تحميل البيانات الحالية للتعديل
-  nameInput.value = profileName.textContent;
-  aboutInput.value = aboutText.textContent;
-  
-  // تحميل روابط التواصل الحالية للتعديل
-  loadSocialLinksForEditing();
-}
+    // إضافة منصة جديدة
+    addSocialBtn.addEventListener('click', () => {
+      const newLinkDiv = document.createElement('div');
+      newLinkDiv.className = 'social-link-item';
+      const newIndex = document.querySelectorAll('.social-link-item').length;
+      
+      newLinkDiv.innerHTML = `
+        <select class="social-input platform-select" data-index="${newIndex}">
+          <option value="fab fa-twitter">تويتر</option>
+          <option value="fab fa-instagram">إنستغرام</option>
+          <option value="fab fa-discord">ديسكورد</option>
+          <option value="fab fa-youtube">يوتيوب</option>
+          <option value="fab fa-facebook">فيسبوك</option>
+          <option value="fab fa-tiktok">تيك توك</option>
+          <option value="fab fa-snapchat">سناب شات</option>
+          <option value="fab fa-linkedin">لينكدإن</option>
+          <option value="fab fa-github">جيت هاب</option>
+          <option value="fab fa-whatsapp">واتساب</option>
+          <option value="fab fa-telegram">تلغرام</option>
+          <option value="fab fa-reddit">ريديت</option>
+          <option value="fab fa-pinterest">بينتريست</option>
+        </select>
+        <input type="text" class="social-input url-input" placeholder="رابط المنصة" data-index="${newIndex}">
+        <div class="link-controls">
+          <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
+            <i class="fas fa-trash"></i> حذف
+          </button>
+        </div>
+      `;
+      
+      socialLinksContainer.appendChild(newLinkDiv);
+    });
 
-// تعطيل وضع المدير
-function deactivateAdminMode() {
-  isAdmin = false;
-  document.body.classList.remove('edit-mode');
-  adminPanel.style.display = 'none';
-}
+    // إغلاق لوحة التحكم
+    exitAdminBtn.addEventListener('click', deactivateAdminMode);
 
-// تحميل روابط التواصل للتعديل
-function loadSocialLinksForEditing() {
-  socialLinksContainer.innerHTML = '';
-  
-  document.querySelectorAll('.social-icon').forEach((icon, index) => {
-    const platform = icon.querySelector('i').className.split(' ')[1];
-    const url = icon.href;
-    
-    const linkDiv = document.createElement('div');
-    linkDiv.className = 'social-link-item';
-    linkDiv.innerHTML = `
-      <select class="social-input platform-select" data-index="${index}">
-        <option value="fab fa-twitter" ${platform === 'fa-twitter' ? 'selected' : ''}>تويتر</option>
-        <option value="fab fa-instagram" ${platform === 'fa-instagram' ? 'selected' : ''}>إنستغرام</option>
-        <option value="fab fa-discord" ${platform === 'fa-discord' ? 'selected' : ''}>ديسكورد</option>
-        <option value="fab fa-youtube" ${platform === 'fa-youtube' ? 'selected' : ''}>يوتيوب</option>
-        <option value="fab fa-facebook" ${platform === 'fa-facebook' ? 'selected' : ''}>فيسبوك</option>
-        <option value="fab fa-tiktok" ${platform === 'fa-tiktok' ? 'selected' : ''}>تيك توك</option>
-        <option value="fab fa-snapchat" ${platform === 'fa-snapchat' ? 'selected' : ''}>سناب شات</option>
-        <option value="fab fa-linkedin" ${platform === 'fa-linkedin' ? 'selected' : ''}>لينكدإن</option>
-        <option value="fab fa-github" ${platform === 'fa-github' ? 'selected' : ''}>جيت هاب</option>
-        <option value="fab fa-whatsapp" ${platform === 'fa-whatsapp' ? 'selected' : ''}>واتساب</option>
-        <option value="fab fa-telegram" ${platform === 'fa-telegram' ? 'selected' : ''}>تلغرام</option>
-        <option value="fab fa-reddit" ${platform === 'fa-reddit' ? 'selected' : ''}>ريديت</option>
-        <option value="fab fa-pinterest" ${platform === 'fa-pinterest' ? 'selected' : ''}>بينتريست</option>
-      </select>
-      <input type="text" class="social-input url-input" value="${url}" placeholder="رابط المنصة" data-index="${index}">
-      <div class="link-controls">
-        <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
-          <i class="fas fa-trash"></i> حذف
-        </button>
-      </div>
-    `;
-    
-    socialLinksContainer.appendChild(linkDiv);
-  });
-}
+    // ==================== إعداد المؤشر المخصص ====================
+    document.addEventListener('mousemove', function(e) {
+      customCursor.style.left = e.clientX + 'px';
+      customCursor.style.top = e.clientY + 'px';
+      
+      const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+      
+      if (hoveredElement && hoveredElement.closest('[data-hover="true"]')) {
+        customCursor.classList.add('hover');
+      } else {
+        customCursor.classList.remove('hover');
+      }
+    });
 
-// حذف رابط تواصل
-function removeSocialLink(button) {
-  const linkItem = button.closest('.social-link-item');
-  linkItem.remove();
-}
+    document.addEventListener('mousedown', function(e) {
+      if (e.button === 0) {
+        customCursor.classList.add('click');
+      }
+    });
 
-// حفظ التغييرات
-saveBtn.addEventListener('click', () => {
-  // تحديث الاسم والنبذة
-  profileName.textContent = nameInput.value;
-  aboutText.textContent = aboutInput.value;
-  
-  // مسح روابط التواصل القديمة
-  socialIcons.innerHTML = '';
-  
-  // إضافة روابط التواصل الجديدة
-  document.querySelectorAll('#socialLinksContainer .social-link-item').forEach(linkItem => {
-    const platform = linkItem.querySelector('.platform-select').value;
-    const url = linkItem.querySelector('.url-input').value;
-    
-    if (url) {
-      const newIcon = document.createElement('a');
-      newIcon.className = 'social-icon';
-      newIcon.href = url;
-      newIcon.target = '_blank';
-      newIcon.setAttribute('data-hover', 'true');
-      newIcon.innerHTML = `<i class="${platform}"></i>`;
-      socialIcons.appendChild(newIcon);
-    }
-  });
-  
-  alert('تم حفظ التغييرات بنجاح!');
-  deactivateAdminMode();
-});
+    document.addEventListener('mouseup', function(e) {
+      if (e.button === 0) {
+        customCursor.classList.remove('click');
+      }
+    });
 
-// إضافة منصة جديدة
-addSocialBtn.addEventListener('click', () => {
-  const newLinkDiv = document.createElement('div');
-  newLinkDiv.className = 'social-link-item';
-  const newIndex = document.querySelectorAll('.social-link-item').length;
-  
-  newLinkDiv.innerHTML = `
-    <select class="social-input platform-select" data-index="${newIndex}">
-      <option value="fab fa-twitter">تويتر</option>
-      <option value="fab fa-instagram">إنستغرام</option>
-      <option value="fab fa-discord">ديسكورد</option>
-      <option value="fab fa-youtube">يوتيوب</option>
-      <option value="fab fa-facebook">فيسبوك</option>
-      <option value="fab fa-tiktok">تيك توك</option>
-      <option value="fab fa-snapchat">سناب شات</option>
-      <option value="fab fa-linkedin">لينكدإن</option>
-      <option value="fab fa-github">جيت هاب</option>
-      <option value="fab fa-whatsapp">واتساب</option>
-      <option value="fab fa-telegram">تلغرام</option>
-      <option value="fab fa-reddit">ريديت</option>
-      <option value="fab fa-pinterest">بينتريست</option>
-    </select>
-    <input type="text" class="social-input url-input" placeholder="رابط المنصة" data-index="${newIndex}">
-    <div class="link-controls">
-      <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
-        <i class="fas fa-trash"></i> حذف
-      </button>
-    </div>
-  `;
-  
-  socialLinksContainer.appendChild(newLinkDiv);
-});
+    // ==================== حركة الدائرة مع الماوس ====================
+    document.addEventListener('mousemove', function(e) {
+      const containerRect = container.getBoundingClientRect();
+      const containerCenterX = containerRect.left + containerRect.width / 2;
+      const containerCenterY = containerRect.top + containerRect.height / 2;
+      
+      container.classList.remove('hover-top', 'hover-bottom', 'hover-left', 'hover-right');
+      
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      
+      const distance = Math.sqrt(
+        Math.pow(mouseX - containerCenterX, 2) + 
+        Math.pow(mouseY - containerCenterY, 2)
+      );
+      
+      if (distance < containerRect.width * 1.2) {
+        if (mouseY < containerCenterY - 50) {
+          container.classList.add('hover-top');
+        } else if (mouseY > containerCenterY + 50) {
+          container.classList.add('hover-bottom');
+        }
+        
+        if (mouseX < containerCenterX - 50) {
+          container.classList.add('hover-left');
+        } else if (mouseX > containerCenterX + 50) {
+          container.classList.add('hover-right');
+        }
+      }
+    });
 
-// إغلاق لوحة التحكم
-exitAdminBtn.addEventListener('click', deactivateAdminMode);
+    // ==================== منع النقر بالزر الأيمن ====================
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-// ==================== إعداد المؤشر المخصص ====================
-document.addEventListener('mousemove', function(e) {
-  customCursor.style.left = e.clientX + 'px';
-  customCursor.style.top = e.clientY + 'px';
-  
-  const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
-  
-  if (hoveredElement && hoveredElement.closest('[data-hover="true"]')) {
-    customCursor.classList.add('hover');
-  } else {
-    customCursor.classList.remove('hover');
-  }
-});
+    // منع النسخ واللصق والسحب والإفلات
+    document.addEventListener('copy', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-document.addEventListener('mousedown', function(e) {
-  if (e.button === 0) {
-    customCursor.classList.add('click');
-  }
-});
+    document.addEventListener('cut', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-document.addEventListener('mouseup', function(e) {
-  if (e.button === 0) {
-    customCursor.classList.remove('click');
-  }
-});
+    document.addEventListener('paste', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-// ==================== حركة الدائرة مع الماوس ====================
-document.addEventListener('mousemove', function(e) {
-  const containerRect = container.getBoundingClientRect();
-  const containerCenterX = containerRect.left + containerRect.width / 2;
-  const containerCenterY = containerRect.top + containerRect.height / 2;
-  
-  container.classList.remove('hover-top', 'hover-bottom', 'hover-left', 'hover-right');
-  
-  const mouseX = e.clientX;
-  const mouseY = e.clientY;
-  
-  const distance = Math.sqrt(
-    Math.pow(mouseX - containerCenterX, 2) + 
-    Math.pow(mouseY - containerCenterY, 2)
-  );
-  
-  if (distance < containerRect.width * 1.2) {
-    if (mouseY < containerCenterY - 50) {
-      container.classList.add('hover-top');
-    } else if (mouseY > containerCenterY + 50) {
-      container.classList.add('hover-bottom');
-    }
-    
-    if (mouseX < containerCenterX - 50) {
-      container.classList.add('hover-left');
-    } else if (mouseX > containerCenterX + 50) {
-      container.classList.add('hover-right');
-    }
-  }
-});
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
-// ==================== منع النقر بالزر الأيمن ====================
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// منع النسخ واللصق والسحب والإفلات
-document.addEventListener('copy', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-document.addEventListener('cut', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-document.addEventListener('paste', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-document.addEventListener('dragstart', function(e) {
-  e.preventDefault();
-  return false;
-});
-
-// دعم تفاعل اللمس
-container.addEventListener('touchstart', function() {
-  container.classList.add('animated');
-  setTimeout(() => container.classList.remove('animated'), 700);
-});
+    // دعم تفاعل اللمس
+    container.addEventListener('touchstart', function() {
+      container.classList.add('animated');
+      setTimeout(() => container.classList.remove('animated'), 700);
+    });
+  </script>
+</body>
+</html>

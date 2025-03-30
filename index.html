@@ -41,7 +41,6 @@
       touch-action: manipulation;
     }
     
-    /* مؤشر الماوس المخصص */
     #custom-cursor {
       position: fixed;
       width: 40px;
@@ -65,149 +64,20 @@
     }
 
     .container {
-      width: 90%;
+      width: 90vmin;
+      height: 90vmin;
       max-width: 550px;
-      height: auto;
-      aspect-ratio: 1/1;
+      max-height: 550px;
       position: relative;
       border-radius: 50%;
       overflow: hidden;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-      transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.4, 1.5), width 0.6s, height 0.6s;
+      transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.4, 1.5);
       background: radial-gradient(circle, var(--dark-overlay) 0%, rgba(95, 79, 74, 0.781) 100%);
       backdrop-filter: blur(10px);
       transform-style: preserve-3d;
       perspective: 1000px;
       margin: 20px;
-    }
-    
-    /* وضع كرة السلة */
-    .container.basketball-mode {
-      width: 120px;
-      height: 120px;
-      background: url('basketball.png');
-      background-size: cover;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      overflow: visible;
-      transition: all 0.3s ease;
-    }
-    
-    /* وضع الرصد للسحب والإفلات */
-    .ball-shadow {
-      position: absolute;
-      width: 120px;
-      height: 20px;
-      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-      border-radius: 50%;
-      bottom: -30px;
-      left: 0;
-      transform: scale(1, 0.3);
-      opacity: 0.6;
-      z-index: -1;
-    }
-    
-    .power-line {
-      position: absolute;
-      height: 3px;
-      background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
-      transform-origin: 0 0;
-      display: none;
-      z-index: 100;
-    }
-    
-    /* زر البلايستيشن */
-    .play-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
-      background: rgb(218, 202, 158);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      transition: all 0.3s ease;
-    }
-    
-    .play-button::before {
-      content: "";
-      width: 0;
-      height: 0;
-      border-top: 15px solid transparent;
-      border-bottom: 15px solid transparent;
-      border-left: 25px solid white;
-      margin-left: 5px;
-    }
-    
-    .play-button:hover {
-      transform: scale(1.1);
-      background: rgb(153, 75, 153);
-    }
-    
-    /* السلة */
-    .basketball-hoop {
-      position: absolute;
-      right: 50px;
-      top: 150px;
-      width: 200px;
-      height: 160px;
-      background-image: url('hoop.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      z-index: 50;
-      transform: translateZ(0);
-      display: none;
-    }
-    
-    .hoop-target {
-      position: absolute;
-      width: 80px;
-      height: 10px;
-      top: 86px;
-      left: 60px;
-      background: rgba(255, 0, 0, 0);
-      z-index: 51;
-    }
-    
-    /* تفاعل الماوس مع مناطق الدائرة */
-    .container.hover-top {
-      transform: perspective(1000px) rotateX(8deg);
-    }
-    
-    .container.hover-bottom {
-      transform: perspective(1000px) rotateX(-8deg);
-    }
-    
-    .container.hover-left {
-      transform: perspective(1000px) rotateY(-8deg);
-    }
-    
-    .container.hover-right {
-      transform: perspective(1000px) rotateY(8deg);
-    }
-
-    /* تفاعلات خاصة للدائرة */
-    .container:hover {
-      box-shadow: 0 0 80px rgba(0, 0, 0, 0.4);
-    }
-    
-    .container::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at center, rgba(221, 203, 144, 0.1) 0%, rgba(155, 89, 182, 0.05) 40%, transparent 70%);
-      z-index: 0;
-      border-radius: 50%;
     }
     
     .content-wrapper {
@@ -222,7 +92,6 @@
       justify-content: center;
       align-items: center;
       z-index: 2;
-      transition: opacity 0.5s ease;
     }
     
     .profile-section {
@@ -240,9 +109,7 @@
       position: relative;
       border-radius: 50%;
       background: rgba(0, 0, 0, 0.2);
-      box-shadow: 
-        0 10px 20px rgba(0, 0, 0, 0.2),
-        inset 0 0 15px rgba(236, 1, 1, 0.2);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(236, 1, 1, 0.2);
       padding: 5px;
       overflow: hidden;
       border: 2px solid rgba(214, 181, 33, 0.5);
@@ -419,7 +286,6 @@
       to { transform: rotate(360deg); }
     }
     
-    /* تأثير إضافي للدائرة عند التفاعل */
     .container.animated {
       animation: bounce 0.7s ease-in-out;
     }
@@ -429,147 +295,32 @@
       50% { transform: scale(1.03); }
     }
     
-    /* تأثير التسجيل */
-    @keyframes score {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.5); opacity: 0.5; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .score-effect {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 36px;
-      font-weight: bold;
-      color: gold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 1000;
-    }
-    
-    .score-effect.show {
-      animation: score-anim 1s forwards;
-    }
-    
-    @keyframes score-anim {
-      0% { opacity: 0; transform: translate(-50%, 0); }
-      20% { opacity: 1; transform: translate(-50%, -20px); }
-      80% { opacity: 1; transform: translate(-50%, -60px); }
-      100% { opacity: 0; transform: translate(-50%, -80px); }
-    }
-    
-    /* لوحة التحكم المعدلة */
-    .admin-panel {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.9);
-      padding: 15px;
-      border-radius: 15px;
-      z-index: 10000;
-      width: 300px;
-      display: none;
-      border: 2px solid #9b59b6;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-    }
-    
-    .admin-panel h3 {
-      color: #f0e1ba;
-      text-align: center;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #daca85;
-    }
-    
-    .admin-input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #daca85;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-family: 'Tajawal', sans-serif;
-    }
-    
-    .admin-btn {
-      padding: 8px 15px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: 'Tajawal', sans-serif;
-      transition: all 0.3s;
-      width: 100%;
-    }
-    
-    .save-btn {
-      background: #2ecc71;
-      color: white;
-    }
-    
-    .delete-btn {
-      background: #e74c3c;
-      color: white;
-    }
-    
-    .add-btn {
-      background: #3498db;
-      color: white;
-    }
-    
-    .edit-mode .editable {
-      background: rgba(155, 89, 182, 0.2);
-      border-radius: 5px;
-      padding: 5px;
-      outline: 2px dashed rgba(155, 89, 182, 0.5);
-    }
-    
-    .social-edit-panel {
-      display: none;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
-    
-    .edit-mode .social-edit-panel {
-      display: block;
-    }
-    
-    .social-input {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 5px;
-      border: 1px solid #daca85;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      font-family: 'Tajawal', sans-serif;
-    }
-    
-    .social-link-item {
-      margin-bottom: 10px;
-      padding: 10px;
+    .visitors-counter {
       background: rgba(0, 0, 0, 0.3);
-      border-radius: 5px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      margin-top: 15px;
+      border: 1px solid var(--secondary-color);
+      width: 100%;
+      justify-content: center;
     }
     
-    .link-controls {
+    .visitors-counter i {
+      color: var(--accent-color);
+    }
+    
+    .stats-container {
       display: flex;
-      gap: 5px;
-      margin-top: 5px;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
     }
     
-    .link-controls button {
-      flex: 1;
-      padding: 5px;
-    }
-    
-    /* أنماط أزرار التصويت */
     .reactions {
       display: flex;
       justify-content: center;
@@ -632,62 +383,10 @@
       100% { transform: scale(1); }
     }
     
-    /* أنماط عداد الزوار */
-    .visitors-counter {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 8px 15px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      margin-top: 15px;
-      border: 1px solid var(--secondary-color);
-      width: 100%;
-      justify-content: center;
-    }
-    
-    .visitors-counter i {
-      color: var(--accent-color);
-    }
-    
-    .stats-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      margin-top: 10px;
-    }
-    
-    /* مؤشر الجيروسكوب */
-    .gyro-indicator {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      z-index: 1000;
-      display: none;
-      backdrop-filter: blur(5px);
-      border: 1px solid var(--accent-color);
-    }
-    
-    .gyro-indicator i {
-      margin-left: 5px;
-    }
-    
-    /* تأثيرات الجيروسكوب */
-    .gyro-active {
-      transition: transform 0.1s linear;
-    }
-    
     @media (max-width: 600px) {
       .container {
-        width: 95%;
-        max-width: 350px;
+        width: 90vmin;
+        height: 90vmin;
       }
       
       .profile-img-container {
@@ -718,35 +417,6 @@
         font-size: 12px;
       }
       
-      .container.basketball-mode {
-        width: 80px;
-        height: 80px;
-      }
-      
-      .ball-shadow {
-        width: 80px;
-      }
-      
-      .basketball-hoop {
-        width: 150px;
-        height: 120px;
-        right: 20px;
-        top: 100px;
-      }
-      
-      .hoop-target {
-        width: 60px;
-        height: 10px;
-        top: 64px;
-        left: 45px;
-      }
-      
-      .admin-panel {
-        width: 90%;
-        right: 5%;
-        bottom: 10px;
-      }
-      
       .reactions {
         gap: 10px;
       }
@@ -758,56 +428,17 @@
       }
     }
     
-    /* منع تحديد النص */
     body {
       user-select: none;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
     }
-    
-    /* تحسينات للشاشات الكبيرة */
-    @media (min-width: 1200px) {
-      .container {
-        max-width: 600px;
-      }
-      
-      .profile-img-container {
-        width: 180px;
-        height: 180px;
-      }
-      
-      .profile-name {
-        font-size: 24px;
-      }
-      
-      .about-me {
-        max-height: 200px;
-      }
-      
-      .about-me p {
-        font-size: 16px;
-      }
-    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-  <!-- مؤشر الماوس المخصص -->
   <div id="custom-cursor"></div>
-
-  <!-- مؤشر الجيروسكوب -->
-  <div class="gyro-indicator" id="gyroIndicator">
-    <i class="fas fa-mobile-alt"></i> وضع الجيروسكوب مفعل
-  </div>
-
-  <!-- زر البلايستيشن -->
-  <a href="play.html" class="play-button" data-hover="true" target="_blank"></a>
-
-  <!-- السلة -->
-  <div class="basketball-hoop">
-    <div class="hoop-target"></div>
-  </div>
 
   <div class="container" id="circular-container">
     <div class="orbit"></div>
@@ -821,7 +452,7 @@
           <img class="profile-img" src="my.png" alt="الصورة الشخصية" id="profile-image" />
         </div>
 
-        <div class="profile-name editable">ابومصلح</div>
+        <div class="profile-name">ابومصلح</div>
         
         <div class="social-icons">
           <a href="https://x.com/GemarXm" class="social-icon" data-hover="true" target="_blank">
@@ -840,19 +471,17 @@
 
         <div class="about-me" data-hover="true">
           <h2>نبذة عني</h2>
-          <p class="editable">
+          <p>
             مرحباً، أنا محمد مصلح.شغفي هو التكنلوجيا وعالم البرمجه وأسعى دائماً لتطوير مهاراتي.
           </p>
         </div>
         
         <div class="stats-container">
-          <!-- عداد الزوار -->
           <div class="visitors-counter">
             <i class="fas fa-eye"></i>
             <span id="visitorCount">0</span> زائر
           </div>
           
-          <!-- أزرار التصويت -->
           <div class="reactions">
             <button class="like-btn" id="likeBtn">
               <i class="fas fa-thumbs-up"></i>
@@ -867,45 +496,8 @@
         </div>
       </div>
     </div>
-    <div class="ball-shadow"></div>
   </div>
 
-  <!-- لوحة التحكم المعدلة -->
-  <div class="admin-panel" id="adminPanel">
-    <h3>لوحة التحكم</h3>
-    
-    <div class="form-group">
-      <label for="nameInput" style="color: #daca85; display: block; margin-bottom: 5px;">الاسم:</label>
-      <input type="text" id="nameInput" class="admin-input" placeholder="أدخل الاسم الجديد">
-    </div>
-    
-    <div class="form-group">
-      <label for="aboutInput" style="color: #daca85; display: block; margin-bottom: 5px;">نبذة عني:</label>
-      <textarea id="aboutInput" class="admin-input" rows="3" placeholder="أدخل النبذة الجديدة"></textarea>
-    </div>
-    
-    <div class="social-edit-panel">
-      <h4 style="color: #daca85; margin-bottom: 10px;">روابط التواصل الاجتماعي:</h4>
-      <div id="socialLinksContainer"></div>
-      
-      <div class="link-controls">
-        <button class="admin-btn add-btn" id="addSocialBtn">
-          <i class="fas fa-plus"></i> إضافة منصة
-        </button>
-      </div>
-    </div>
-    
-    <div class="admin-controls">
-      <button class="admin-btn save-btn" id="saveBtn">
-        <i class="fas fa-save"></i> حفظ التغييرات
-      </button>
-      <button class="admin-btn delete-btn" id="exitAdminBtn">
-        <i class="fas fa-times"></i> إغلاق
-      </button>
-    </div>
-  </div>
-
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
@@ -921,339 +513,24 @@
       appId: "1:123456789012:web:abcdef1234567890abcdef"
     };
     
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // كلمة السر الجديدة
-    const ADMIN_PASSWORD = "hajaya2007";
-    let isAdmin = false;
-    let keySequence = [];
-    let isGyroActive = false;
-    let lastGyroUpdate = 0;
-    let gyroTimeout;
-     
-    // عناصر التحكم
-    const customCursor = document.getElementById('custom-cursor');
-    const container = document.getElementById('circular-container');
-    const adminPanel = document.getElementById('adminPanel');
-    const saveBtn = document.getElementById('saveBtn');
-    const addSocialBtn = document.getElementById('addSocialBtn');
-    const exitAdminBtn = document.getElementById('exitAdminBtn');
-    const socialLinksContainer = document.getElementById('socialLinksContainer');
-    const socialIcons = document.querySelector('.social-icons');
-    const nameInput = document.getElementById('nameInput');
-    const aboutInput = document.getElementById('aboutInput');
-    const profileName = document.querySelector('.profile-name');
-    const aboutText = document.querySelector('.about-me p');
-    const gyroIndicator = document.getElementById('gyroIndicator');
-
-    // ==================== نظام التحكم السري ====================
-    document.addEventListener('keydown', (e) => {
-      keySequence.push(e.key.toLowerCase());
-      if (keySequence.length > ADMIN_PASSWORD.length) {
-        keySequence.shift();
-      }
-      
-      if (keySequence.join('') === ADMIN_PASSWORD) {
-        activateAdminMode();
-        keySequence = [];
-      }
-    });
-
-    // تفعيل وضع المدير
-    function activateAdminMode() {
-      isAdmin = true;
-      document.body.classList.add('edit-mode');
-      adminPanel.style.display = 'block';
-      
-      // تحميل البيانات الحالية للتعديل
-      nameInput.value = profileName.textContent;
-      aboutInput.value = aboutText.textContent;
-      
-      // تحميل روابط التواصل الحالية للتعديل
-      loadSocialLinksForEditing();
-    }
-
-    // تعطيل وضع المدير
-    function deactivateAdminMode() {
-      isAdmin = false;
-      document.body.classList.remove('edit-mode');
-      adminPanel.style.display = 'none';
-    }
-
-    // تحميل روابط التواصل للتعديل
-    function loadSocialLinksForEditing() {
-      socialLinksContainer.innerHTML = '';
-      
-      document.querySelectorAll('.social-icon').forEach((icon, index) => {
-        const platform = icon.querySelector('i').className.split(' ')[1];
-        const url = icon.href;
-        
-        const linkDiv = document.createElement('div');
-        linkDiv.className = 'social-link-item';
-        linkDiv.innerHTML = `
-          <select class="social-input platform-select" data-index="${index}">
-            <option value="fab fa-twitter" ${platform === 'fa-twitter' ? 'selected' : ''}>تويتر</option>
-            <option value="fab fa-instagram" ${platform === 'fa-instagram' ? 'selected' : ''}>إنستغرام</option>
-            <option value="fab fa-discord" ${platform === 'fa-discord' ? 'selected' : ''}>ديسكورد</option>
-            <option value="fab fa-youtube" ${platform === 'fa-youtube' ? 'selected' : ''}>يوتيوب</option>
-            <option value="fab fa-facebook" ${platform === 'fa-facebook' ? 'selected' : ''}>فيسبوك</option>
-            <option value="fab fa-tiktok" ${platform === 'fa-tiktok' ? 'selected' : ''}>تيك توك</option>
-            <option value="fab fa-snapchat" ${platform === 'fa-snapchat' ? 'selected' : ''}>سناب شات</option>
-            <option value="fab fa-linkedin" ${platform === 'fa-linkedin' ? 'selected' : ''}>لينكدإن</option>
-            <option value="fab fa-github" ${platform === 'fa-github' ? 'selected' : ''}>جيت هاب</option>
-            <option value="fab fa-whatsapp" ${platform === 'fa-whatsapp' ? 'selected' : ''}>واتساب</option>
-            <option value="fab fa-pinterest" ${platform === 'fa-pinterest' ? 'selected' : ''}>بينتريست</option>
-          </select>
-          <input type="text" class="social-input url-input" value="${url}" placeholder="رابط المنصة" data-index="${index}">
-          <div class="link-controls">
-            <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
-              <i class="fas fa-trash"></i> حذف
-            </button>
-          </div>
-        `;
-        
-        socialLinksContainer.appendChild(linkDiv);
-      });
-    }
-
-    // حذف رابط تواصل
-    function removeSocialLink(button) {
-      const linkItem = button.closest('.social-link-item');
-      linkItem.remove();
-    }
-
-    // حفظ التغييرات
-    saveBtn.addEventListener('click', () => {
-      // تحديث الاسم والنبذة
-      profileName.textContent = nameInput.value;
-      aboutText.textContent = aboutInput.value;
-      
-      // مسح روابط التواصل القديمة
-      socialIcons.innerHTML = '';
-      
-      // إضافة روابط التواصل الجديدة
-      document.querySelectorAll('#socialLinksContainer .social-link-item').forEach(linkItem => {
-        const platform = linkItem.querySelector('.platform-select').value;
-        const url = linkItem.querySelector('.url-input').value;
-        
-        if (url) {
-          const newIcon = document.createElement('a');
-          newIcon.className = 'social-icon';
-          newIcon.href = url;
-          newIcon.target = '_blank';
-          newIcon.setAttribute('data-hover', 'true');
-          newIcon.innerHTML = `<i class="${platform}"></i>`;
-          socialIcons.appendChild(newIcon);
-        }
-      });
-      
-      alert('تم حفظ التغييرات بنجاح!');
-      deactivateAdminMode();
-    });
-
-    // إضافة منصة جديدة
-    addSocialBtn.addEventListener('click', () => {
-      const newLinkDiv = document.createElement('div');
-      newLinkDiv.className = 'social-link-item';
-      const newIndex = document.querySelectorAll('.social-link-item').length;
-      
-      newLinkDiv.innerHTML = `
-        <select class="social-input platform-select" data-index="${newIndex}">
-          <option value="fab fa-twitter">تويتر</option>
-          <option value="fab fa-instagram">إنستغرام</option>
-          <option value="fab fa-discord">ديسكورد</option>
-          <option value="fab fa-youtube">يوتيوب</option>
-          <option value="fab fa-facebook">فيسبوك</option>
-          <option value="fab fa-tiktok">تيك توك</option>
-          <option value="fab fa-snapchat">سناب شات</option>
-          <option value="fab fa-linkedin">لينكدإن</option>
-          <option value="fab fa-github">جيت هاب</option>
-          <option value="fab fa-whatsapp">واتساب</option>
-          <option value="fab fa-telegram">تلغرام</option>
-          <option value="fab fa-reddit">ريديت</option>
-          <option value="fab fa-pinterest">بينتريست</option>
-        </select>
-        <input type="text" class="social-input url-input" placeholder="رابط المنصة" data-index="${newIndex}">
-        <div class="link-controls">
-          <button class="admin-btn delete-btn" onclick="removeSocialLink(this)" style="background: #e74c3c;">
-            <i class="fas fa-trash"></i> حذف
-          </button>
-        </div>
-      `;
-      
-      socialLinksContainer.appendChild(newLinkDiv);
-    });
-
-    // إغلاق لوحة التحكم
-    exitAdminBtn.addEventListener('click', deactivateAdminMode);
-
-    // ==================== إعداد المؤشر المخصص ====================
-    document.addEventListener('mousemove', function(e) {
-      customCursor.style.left = e.clientX + 'px';
-      customCursor.style.top = e.clientY + 'px';
-      
-      const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
-      
-      if (hoveredElement && hoveredElement.closest('[data-hover="true"]')) {
-        customCursor.classList.add('hover');
-      } else {
-        customCursor.classList.remove('hover');
-      }
-    });
-
-    document.addEventListener('mousedown', function(e) {
-      if (e.button === 0) {
-        customCursor.classList.add('click');
-      }
-    });
-
-    document.addEventListener('mouseup', function(e) {
-      if (e.button === 0) {
-        customCursor.classList.remove('click');
-      }
-    });
-
-    // ==================== حركة الدائرة مع الماوس/الجيروسكوب ====================
-    function updateContainerPosition(x, y) {
-      const containerRect = container.getBoundingClientRect();
-      const containerCenterX = containerRect.left + containerRect.width / 2;
-      const containerCenterY = containerRect.top + containerRect.height / 2;
-      
-      container.classList.remove('hover-top', 'hover-bottom', 'hover-left', 'hover-right');
-      
-      const distance = Math.sqrt(
-        Math.pow(x - containerCenterX, 2) + 
-        Math.pow(y - containerCenterY, 2)
-      );
-      
-      if (distance < containerRect.width * 1.2) {
-        if (y < containerCenterY - 50) {
-          container.classList.add('hover-top');
-        } else if (y > containerCenterY + 50) {
-          container.classList.add('hover-bottom');
-        }
-        
-        if (x < containerCenterX - 50) {
-          container.classList.add('hover-left');
-        } else if (x > containerCenterX + 50) {
-          container.classList.add('hover-right');
-        }
-      }
-    }
-
-    // حركة الماوس العادية
-    document.addEventListener('mousemove', function(e) {
-      if (!isGyroActive) {
-        updateContainerPosition(e.clientX, e.clientY);
-      }
-    });
-
-    // ==================== منع النقر بالزر الأيمن ====================
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // منع النسخ واللصق والسحب والإفلات
-    document.addEventListener('copy', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    document.addEventListener('cut', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    document.addEventListener('paste', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    document.addEventListener('dragstart', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // دعم تفاعل اللمس
-    container.addEventListener('touchstart', function() {
-      container.classList.add('animated');
-      setTimeout(() => container.classList.remove('animated'), 700);
-    });
-
-    // ==================== نظام الجيروسكوب ====================
-    function setupGyro() {
-      if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    }
-
-    function handleOrientation(event) {
-      const now = Date.now();
-      if (now - lastGyroUpdate < 100) return; // تحديث كل 100ms فقط
-      lastGyroUpdate = now;
-
-      const beta = event.beta;  // الميل الأمامي/الخلفي (-180 إلى 180)
-      const gamma = event.gamma; // الميل الجانبي (-90 إلى 90)
-      
-      if (beta !== null && gamma !== null) {
-        if (!isGyroActive) {
-          isGyroActive = true;
-          gyroIndicator.style.display = 'block';
-          customCursor.style.display = 'none';
-          container.classList.add('gyro-active');
-        }
-        
-        // إعادة تعيين المهلة لإخفاء المؤشر
-        clearTimeout(gyroTimeout);
-        gyroTimeout = setTimeout(() => {
-          isGyroActive = false;
-          gyroIndicator.style.display = 'none';
-          customCursor.style.display = 'block';
-          container.classList.remove('gyro-active');
-        }, 2000);
-        
-        // تحويل قيم الجيروسكوب إلى إحداثيات الشاشة
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        
-        // تحويل القيم (-90 إلى 90) إلى (0 إلى screenWidth/Height)
-        let x = (gamma + 90) * (screenWidth / 180);
-        let y = (beta + 90) * (screenHeight / 180);
-        
-        // التأكد من أن الإحداثيات ضمن حدود الشاشة
-        x = Math.max(0, Math.min(screenWidth, x));
-        y = Math.max(0, Math.min(screenHeight, y));
-        
-        updateContainerPosition(x, y);
-      }
-    }
-
-    // ==================== نظام عداد الزوار مع Firebase ====================
+    // نظام المشاهدات
     function updateVisitorCount() {
-      // الحصول على معرف فريد للزائر
-      let visitorId = localStorage.getItem('visitorId');
-      if (!visitorId) {
-        visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('visitorId', visitorId);
-      }
+      const visitorId = localStorage.getItem('visitorId') || 'visitor_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('visitorId', visitorId);
 
-      // الحصول على تاريخ اليوم
-      const today = new Date().toDateString();
+      const today = new Date().toISOString().split('T')[0];
       const lastVisit = localStorage.getItem('lastVisit');
 
-      // إذا كان الزائر جديد لهذا اليوم
       if (lastVisit !== today) {
-        // تحديث قاعدة البيانات
         const visitorsRef = database.ref('visitors');
         visitorsRef.transaction((currentData) => {
-          if (currentData === null) {
+          if (!currentData) {
             return { count: 1, visitors: { [visitorId]: today } };
           }
           
-          // إذا كان الزائر لم يسجل من قبل
           if (!currentData.visitors || !currentData.visitors[visitorId]) {
             currentData.count = (currentData.count || 0) + 1;
             currentData.visitors = currentData.visitors || {};
@@ -1261,69 +538,52 @@
           }
           
           return currentData;
-        }).then(() => {
-          // تحديث localStorage
-          localStorage.setItem('lastVisit', today);
         });
+        
+        localStorage.setItem('lastVisit', today);
       }
 
-      // عرض عدد الزوار
       database.ref('visitors/count').on('value', (snapshot) => {
-        const count = snapshot.val() || 0;
-        document.getElementById('visitorCount').textContent = count;
+        document.getElementById('visitorCount').textContent = snapshot.val() || 0;
       });
     }
 
-    // ==================== نظام الإعجاب مع Firebase ====================
+    // نظام الإعجاب
     function setupReactions() {
-      // توليد معرف فريد للمستخدم
-      const userId = localStorage.getItem('userReactionId') || 
-                    'user_' + Math.random().toString(36).substr(2, 9);
+      const userId = localStorage.getItem('userReactionId') || 'user_' + Math.random().toString(36).substr(2, 9);
       localStorage.setItem('userReactionId', userId);
 
-      // جلب بيانات التفاعلات من Firebase
       database.ref('reactions').on('value', (snapshot) => {
-        const reactionsData = snapshot.val() || { likes: 0, dislikes: 0, likedBy: {}, dislikedBy: {} };
+        const data = snapshot.val() || { likes: 0, dislikes: 0, likedBy: {}, dislikedBy: {} };
         
-        // تحديث العداد
-        document.getElementById('likeCount').textContent = reactionsData.likes || 0;
-        document.getElementById('dislikeCount').textContent = reactionsData.dislikes || 0;
+        document.getElementById('likeCount').textContent = data.likes || 0;
+        document.getElementById('dislikeCount').textContent = data.dislikes || 0;
         
-        // تحديث حالة الأزرار
-        if (reactionsData.likedBy && reactionsData.likedBy[userId]) {
-          document.getElementById('likeBtn').classList.add('active');
-          document.getElementById('dislikeBtn').classList.remove('active');
-        } else if (reactionsData.dislikedBy && reactionsData.dislikedBy[userId]) {
-          document.getElementById('dislikeBtn').classList.add('active');
-          document.getElementById('likeBtn').classList.remove('active');
-        } else {
-          document.getElementById('likeBtn').classList.remove('active');
-          document.getElementById('dislikeBtn').classList.remove('active');
-        }
+        document.getElementById('likeBtn').classList.toggle('active', data.likedBy && data.likedBy[userId]);
+        document.getElementById('dislikeBtn').classList.toggle('active', data.dislikedBy && data.dislikedBy[userId]);
       });
 
-      // حدث زر الإعجاب
       document.getElementById('likeBtn').addEventListener('click', () => {
         const likeBtn = document.getElementById('likeBtn');
         likeBtn.classList.add('like-animation');
         setTimeout(() => likeBtn.classList.remove('like-animation'), 500);
         
         database.ref('reactions').transaction((currentData) => {
-          if (currentData === null) {
+          if (!currentData) {
             return { likes: 1, dislikes: 0, likedBy: { [userId]: true }, dislikedBy: {} };
           }
           
-          // إذا كان معجبًا بالفعل
-          if (currentData.likedBy && currentData.likedBy[userId]) {
+          const isLiked = currentData.likedBy && currentData.likedBy[userId];
+          const isDisliked = currentData.dislikedBy && currentData.dislikedBy[userId];
+          
+          if (isLiked) {
             currentData.likes--;
             delete currentData.likedBy[userId];
           } else {
-            // إزالة عدم الإعجاب إذا كان موجودًا
-            if (currentData.dislikedBy && currentData.dislikedBy[userId]) {
+            if (isDisliked) {
               currentData.dislikes--;
               delete currentData.dislikedBy[userId];
             }
-            // إضافة إعجاب جديد
             currentData.likes = (currentData.likes || 0) + 1;
             currentData.likedBy = currentData.likedBy || {};
             currentData.likedBy[userId] = true;
@@ -1333,24 +593,23 @@
         });
       });
 
-      // حدث زر عدم الإعجاب
       document.getElementById('dislikeBtn').addEventListener('click', () => {
         database.ref('reactions').transaction((currentData) => {
-          if (currentData === null) {
+          if (!currentData) {
             return { likes: 0, dislikes: 1, likedBy: {}, dislikedBy: { [userId]: true } };
           }
           
-          // إذا كان غير معجب بالفعل
-          if (currentData.dislikedBy && currentData.dislikedBy[userId]) {
+          const isDisliked = currentData.dislikedBy && currentData.dislikedBy[userId];
+          const isLiked = currentData.likedBy && currentData.likedBy[userId];
+          
+          if (isDisliked) {
             currentData.dislikes--;
             delete currentData.dislikedBy[userId];
           } else {
-            // إزالة الإعجاب إذا كان موجودًا
-            if (currentData.likedBy && currentData.likedBy[userId]) {
+            if (isLiked) {
               currentData.likes--;
               delete currentData.likedBy[userId];
             }
-            // إضافة عدم إعجاب جديد
             currentData.dislikes = (currentData.dislikes || 0) + 1;
             currentData.dislikedBy = currentData.dislikedBy || {};
             currentData.dislikedBy[userId] = true;
@@ -1361,11 +620,42 @@
       });
     }
 
-    // استدعاء الدوال عند تحميل الصفحة
+    // مؤشر الماوس
+    document.addEventListener('mousemove', function(e) {
+      const cursor = document.getElementById('custom-cursor');
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      
+      const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+      
+      if (hoveredElement && hoveredElement.closest('[data-hover="true"]')) {
+        cursor.classList.add('hover');
+      } else {
+        cursor.classList.remove('hover');
+      }
+    });
+
+    document.addEventListener('mousedown', function(e) {
+      if (e.button === 0) {
+        document.getElementById('custom-cursor').classList.add('click');
+      }
+    });
+
+    document.addEventListener('mouseup', function(e) {
+      if (e.button === 0) {
+        document.getElementById('custom-cursor').classList.remove('click');
+      }
+    });
+
+    // منع التكبير/التصغير على الهاتف
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault();
+    });
+
+    // بدء التشغيل
     window.addEventListener('DOMContentLoaded', () => {
       updateVisitorCount();
       setupReactions();
-      setupGyro();
     });
   </script>
 </body>

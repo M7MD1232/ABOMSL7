@@ -806,7 +806,26 @@
     </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
   <script>
+    // تهيئة Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvJgJjZ4Z4Z4Z4Z4Z4Z4Z4Z4Z4Z4Z4Z4",
+      authDomain: "your-project-id.firebaseapp.com",
+      databaseURL: "https://your-project-id.firebaseio.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project-id.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890abcdef"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
     // كلمة السر الجديدة
     const ADMIN_PASSWORD = "hajaya2007";
     let isAdmin = false;
@@ -1058,112 +1077,138 @@
       container.classList.add('animated');
       setTimeout(() => container.classList.remove('animated'), 700);
     });
-    // نظام عداد الزوار
-function updateVisitorCount() {
-  // الحصول على بيانات الزوار من localStorage
-  let visitorsData = JSON.parse(localStorage.getItem('visitorsData')) || {
-    count: 0,
-    lastVisit: null
-  };
 
-  // التحقق من آخر زيارة لتجنب العد المزدوج
-  const today = new Date().toDateString();
-  
-  if (visitorsData.lastVisit !== today) {
-    visitorsData.count++;
-    visitorsData.lastVisit = today;
-    localStorage.setItem('visitorsData', JSON.stringify(visitorsData));
-  }
-
-  // عرض عدد الزوار
-  document.getElementById('visitorCount').textContent = visitorsData.count;
-}
-
-// استدعاء الدالة عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', updateVisitorCount);
-  
-  // نظام الإعجاب وعدم الإعجاب
-function setupReactions() {
-  // توليد معرف فريد للمستخدم
-  const userId = localStorage.getItem('userReactionId') || 
-                'user_' + Math.random().toString(36).substr(2, 9);
-  localStorage.setItem('userReactionId', userId);
-
-  // تحميل بيانات التصويت
-  let reactionsData = JSON.parse(localStorage.getItem('reactionsData')) || {
-    likes: 0,
-    dislikes: 0,
-    likedBy: [],
-    dislikedBy: []
-  };
-
-  // تحديث العداد
-  function updateCounts() {
-    document.getElementById('likeCount').textContent = reactionsData.likes;
-    document.getElementById('dislikeCount').textContent = reactionsData.dislikes;
-    
-    // تحديث حالة الأزرار
-    if (reactionsData.likedBy.includes(userId)) {
-      document.getElementById('likeBtn').classList.add('active');
-      document.getElementById('dislikeBtn').classList.remove('active');
-    } else if (reactionsData.dislikedBy.includes(userId)) {
-      document.getElementById('dislikeBtn').classList.add('active');
-      document.getElementById('likeBtn').classList.remove('active');
-    } else {
-      document.getElementById('likeBtn').classList.remove('active');
-      document.getElementById('dislikeBtn').classList.remove('active');
-    }
-  }
-
-  // حدث زر الإعجاب
-  document.getElementById('likeBtn').addEventListener('click', () => {
-    if (reactionsData.likedBy.includes(userId)) {
-      // إزالة الإعجاب إذا كان معجبًا بالفعل
-      reactionsData.likes--;
-      reactionsData.likedBy = reactionsData.likedBy.filter(id => id !== userId);
-    } else {
-      // إزالة عدم الإعجاب إذا كان موجودًا
-      if (reactionsData.dislikedBy.includes(userId)) {
-        reactionsData.dislikes--;
-        reactionsData.dislikedBy = reactionsData.dislikedBy.filter(id => id !== userId);
+    // ==================== نظام عداد الزوار مع Firebase ====================
+    function updateVisitorCount() {
+      // الحصول على معرف فريد للزائر
+      let visitorId = localStorage.getItem('visitorId');
+      if (!visitorId) {
+        visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitorId', visitorId);
       }
-      // إضافة إعجاب جديد
-      reactionsData.likes++;
-      reactionsData.likedBy.push(userId);
-    }
-    
-    localStorage.setItem('reactionsData', JSON.stringify(reactionsData));
-    updateCounts();
-  });
 
-  // حدث زر عدم الإعجاب
-  document.getElementById('dislikeBtn').addEventListener('click', () => {
-    if (reactionsData.dislikedBy.includes(userId)) {
-      // إزالة عدم الإعجاب إذا كان غير معجب بالفعل
-      reactionsData.dislikes--;
-      reactionsData.dislikedBy = reactionsData.dislikedBy.filter(id => id !== userId);
-    } else {
-      // إزالة الإعجاب إذا كان موجودًا
-      if (reactionsData.likedBy.includes(userId)) {
-        reactionsData.likes--;
-        reactionsData.likedBy = reactionsData.likedBy.filter(id => id !== userId);
+      // الحصول على تاريخ اليوم
+      const today = new Date().toDateString();
+      const lastVisit = localStorage.getItem('lastVisit');
+
+      // إذا كان الزائر جديد لهذا اليوم
+      if (lastVisit !== today) {
+        // تحديث قاعدة البيانات
+        const visitorsRef = database.ref('visitors');
+        visitorsRef.transaction((currentData) => {
+          if (currentData === null) {
+            return { count: 1, visitors: { [visitorId]: today } };
+          }
+          
+          // إذا كان الزائر لم يسجل من قبل
+          if (!currentData.visitors || !currentData.visitors[visitorId]) {
+            currentData.count = (currentData.count || 0) + 1;
+            currentData.visitors = currentData.visitors || {};
+            currentData.visitors[visitorId] = today;
+          }
+          
+          return currentData;
+        }).then(() => {
+          // تحديث localStorage
+          localStorage.setItem('lastVisit', today);
+        });
       }
-      // إضافة عدم إعجاب جديد
-      reactionsData.dislikes++;
-      reactionsData.dislikedBy.push(userId);
+
+      // عرض عدد الزوار
+      database.ref('visitors/count').on('value', (snapshot) => {
+        const count = snapshot.val() || 0;
+        document.getElementById('visitorCount').textContent = count;
+      });
     }
-    
-    localStorage.setItem('reactionsData', JSON.stringify(reactionsData));
-    updateCounts();
-  });
 
-  // التهيئة الأولية
-  updateCounts();
-}
+    // ==================== نظام الإعجاب مع Firebase ====================
+    function setupReactions() {
+      // توليد معرف فريد للمستخدم
+      const userId = localStorage.getItem('userReactionId') || 
+                    'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('userReactionId', userId);
 
-// استدعاء الدالة عند تحميل الصفحة
-window.addEventListener('DOMContentLoaded', setupReactions); 
+      // جلب بيانات التفاعلات من Firebase
+      database.ref('reactions').on('value', (snapshot) => {
+        const reactionsData = snapshot.val() || { likes: 0, dislikes: 0, likedBy: {}, dislikedBy: {} };
+        
+        // تحديث العداد
+        document.getElementById('likeCount').textContent = reactionsData.likes || 0;
+        document.getElementById('dislikeCount').textContent = reactionsData.dislikes || 0;
+        
+        // تحديث حالة الأزرار
+        if (reactionsData.likedBy && reactionsData.likedBy[userId]) {
+          document.getElementById('likeBtn').classList.add('active');
+          document.getElementById('dislikeBtn').classList.remove('active');
+        } else if (reactionsData.dislikedBy && reactionsData.dislikedBy[userId]) {
+          document.getElementById('dislikeBtn').classList.add('active');
+          document.getElementById('likeBtn').classList.remove('active');
+        } else {
+          document.getElementById('likeBtn').classList.remove('active');
+          document.getElementById('dislikeBtn').classList.remove('active');
+        }
+      });
 
+      // حدث زر الإعجاب
+      document.getElementById('likeBtn').addEventListener('click', () => {
+        database.ref('reactions').transaction((currentData) => {
+          if (currentData === null) {
+            return { likes: 1, dislikes: 0, likedBy: { [userId]: true }, dislikedBy: {} };
+          }
+          
+          // إذا كان معجبًا بالفعل
+          if (currentData.likedBy && currentData.likedBy[userId]) {
+            currentData.likes--;
+            delete currentData.likedBy[userId];
+          } else {
+            // إزالة عدم الإعجاب إذا كان موجودًا
+            if (currentData.dislikedBy && currentData.dislikedBy[userId]) {
+              currentData.dislikes--;
+              delete currentData.dislikedBy[userId];
+            }
+            // إضافة إعجاب جديد
+            currentData.likes = (currentData.likes || 0) + 1;
+            currentData.likedBy = currentData.likedBy || {};
+            currentData.likedBy[userId] = true;
+          }
+          
+          return currentData;
+        });
+      });
+
+      // حدث زر عدم الإعجاب
+      document.getElementById('dislikeBtn').addEventListener('click', () => {
+        database.ref('reactions').transaction((currentData) => {
+          if (currentData === null) {
+            return { likes: 0, dislikes: 1, likedBy: {}, dislikedBy: { [userId]: true } };
+          }
+          
+          // إذا كان غير معجب بالفعل
+          if (currentData.dislikedBy && currentData.dislikedBy[userId]) {
+            currentData.dislikes--;
+            delete currentData.dislikedBy[userId];
+          } else {
+            // إزالة الإعجاب إذا كان موجودًا
+            if (currentData.likedBy && currentData.likedBy[userId]) {
+              currentData.likes--;
+              delete currentData.likedBy[userId];
+            }
+            // إضافة عدم إعجاب جديد
+            currentData.dislikes = (currentData.dislikes || 0) + 1;
+            currentData.dislikedBy = currentData.dislikedBy || {};
+            currentData.dislikedBy[userId] = true;
+          }
+          
+          return currentData;
+        });
+      });
+    }
+
+    // استدعاء الدوال عند تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+      updateVisitorCount();
+      setupReactions();
+    });
   </script>
 </body>
 </html>

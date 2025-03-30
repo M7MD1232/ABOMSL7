@@ -612,6 +612,16 @@
   background: #e74c3c;
   color: white;
 }
+
+.like-animation {
+  animation: likePulse 0.5s ease-out;
+}
+
+@keyframes likePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
     @media (max-width: 600px) {
       .container {
         width: 350px;
@@ -699,12 +709,31 @@
 .visitors-counter i {
   color: var(--accent-color);
 }
+
+/* مؤشر الجيروسكوب */
+.gyro-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 1000;
+  display: none;
+}
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
   <!-- مؤشر الماوس المخصص -->
   <div id="custom-cursor"></div>
+
+  <!-- مؤشر الجيروسكوب -->
+  <div class="gyro-indicator" id="gyroIndicator">
+    <i class="fas fa-mobile-alt"></i> وضع الجيروسكوب مفعل
+  </div>
 
   <!-- زر البلايستيشن -->
   <a href="play.html" class="play-button" data-hover="true" target="_blank"></a>
@@ -830,6 +859,8 @@
     const ADMIN_PASSWORD = "hajaya2007";
     let isAdmin = false;
     let keySequence = [];
+    let isGyroActive = false;
+    let lastGyroUpdate = 0;
      
     // عناصر التحكم
     const customCursor = document.getElementById('custom-cursor');
@@ -844,6 +875,7 @@
     const aboutInput = document.getElementById('aboutInput');
     const profileName = document.querySelector('.profile-name');
     const aboutText = document.querySelector('.about-me p');
+    const gyroIndicator = document.getElementById('gyroIndicator');
 
     // ==================== نظام التحكم السري ====================
     document.addEventListener('keydown', (e) => {
@@ -1014,34 +1046,38 @@
       }
     });
 
-    // ==================== حركة الدائرة مع الماوس ====================
-    document.addEventListener('mousemove', function(e) {
+    // ==================== حركة الدائرة مع الماوس/الجيروسكوب ====================
+    function updateContainerPosition(x, y) {
       const containerRect = container.getBoundingClientRect();
       const containerCenterX = containerRect.left + containerRect.width / 2;
       const containerCenterY = containerRect.top + containerRect.height / 2;
       
       container.classList.remove('hover-top', 'hover-bottom', 'hover-left', 'hover-right');
       
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-      
       const distance = Math.sqrt(
-        Math.pow(mouseX - containerCenterX, 2) + 
-        Math.pow(mouseY - containerCenterY, 2)
+        Math.pow(x - containerCenterX, 2) + 
+        Math.pow(y - containerCenterY, 2)
       );
       
       if (distance < containerRect.width * 1.2) {
-        if (mouseY < containerCenterY - 50) {
+        if (y < containerCenterY - 50) {
           container.classList.add('hover-top');
-        } else if (mouseY > containerCenterY + 50) {
+        } else if (y > containerCenterY + 50) {
           container.classList.add('hover-bottom');
         }
         
-        if (mouseX < containerCenterX - 50) {
+        if (x < containerCenterX - 50) {
           container.classList.add('hover-left');
-        } else if (mouseX > containerCenterX + 50) {
+        } else if (x > containerCenterX + 50) {
           container.classList.add('hover-right');
         }
+      }
+    }
+
+    // حركة الماوس العادية
+    document.addEventListener('mousemove', function(e) {
+      if (!isGyroActive) {
+        updateContainerPosition(e.clientX, e.clientY);
       }
     });
 
@@ -1077,6 +1113,50 @@
       container.classList.add('animated');
       setTimeout(() => container.classList.remove('animated'), 700);
     });
+
+    // ==================== نظام الجيروسكوب ====================
+    function setupGyro() {
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    }
+
+    function handleOrientation(event) {
+      const now = Date.now();
+      if (now - lastGyroUpdate < 100) return; // تحديث كل 100ms فقط
+      lastGyroUpdate = now;
+
+      const beta = event.beta;  // الميل الأمامي/الخلفي (-180 إلى 180)
+      const gamma = event.gamma; // الميل الجانبي (-90 إلى 90)
+      
+      if (beta !== null && gamma !== null) {
+        if (!isGyroActive) {
+          isGyroActive = true;
+          gyroIndicator.style.display = 'block';
+          customCursor.style.display = 'none';
+        }
+        
+        // تحويل قيم الجيروسكوب إلى إحداثيات الشاشة
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        // تحويل القيم (-90 إلى 90) إلى (0 إلى screenWidth/Height)
+        let x = (gamma + 90) * (screenWidth / 180);
+        let y = (beta + 90) * (screenHeight / 180);
+        
+        // التأكد من أن الإحداثيات ضمن حدود الشاشة
+        x = Math.max(0, Math.min(screenWidth, x));
+        y = Math.max(0, Math.min(screenHeight, y));
+        
+        updateContainerPosition(x, y);
+      } else {
+        if (isGyroActive) {
+          isGyroActive = false;
+          gyroIndicator.style.display = 'none';
+          customCursor.style.display = 'block';
+        }
+      }
+    }
 
     // ==================== نظام عداد الزوار مع Firebase ====================
     function updateVisitorCount() {
@@ -1151,6 +1231,10 @@
 
       // حدث زر الإعجاب
       document.getElementById('likeBtn').addEventListener('click', () => {
+        const likeBtn = document.getElementById('likeBtn');
+        likeBtn.classList.add('like-animation');
+        setTimeout(() => likeBtn.classList.remove('like-animation'), 500);
+        
         database.ref('reactions').transaction((currentData) => {
           if (currentData === null) {
             return { likes: 1, dislikes: 0, likedBy: { [userId]: true }, dislikedBy: {} };
@@ -1208,6 +1292,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       updateVisitorCount();
       setupReactions();
+      setupGyro();
     });
   </script>
 </body>

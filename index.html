@@ -2,7 +2,7 @@
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ABOMSL7</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
@@ -38,6 +38,7 @@
       background-repeat: no-repeat;
       background-attachment: fixed;
       overflow: hidden;
+      touch-action: manipulation;
     }
     
     /* مؤشر الماوس المخصص */
@@ -64,8 +65,10 @@
     }
 
     .container {
-      width: 550px;
-      height: 550px;
+      width: 90%;
+      max-width: 550px;
+      height: auto;
+      aspect-ratio: 1/1;
       position: relative;
       border-radius: 50%;
       overflow: hidden;
@@ -75,6 +78,7 @@
       backdrop-filter: blur(10px);
       transform-style: preserve-3d;
       perspective: 1000px;
+      margin: 20px;
     }
     
     /* وضع كرة السلة */
@@ -564,68 +568,126 @@
       flex: 1;
       padding: 5px;
     }
+    
     /* أنماط أزرار التصويت */
-.reactions {
-  display: flex;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.like-btn, .dislike-btn {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 14px;
-}
-
-.like-btn {
-  background: rgba(46, 204, 113, 0.2);
-  color: #2ecc71;
-  border: 1px solid #2ecc71;
-}
-
-.dislike-btn {
-  background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
-  border: 1px solid #e74c3c;
-}
-
-.like-btn:hover {
-  background: rgba(46, 204, 113, 0.4);
-}
-
-.dislike-btn:hover {
-  background: rgba(231, 76, 60, 0.4);
-}
-
-.like-btn.active {
-  background: #2ecc71;
-  color: white;
-}
-
-.dislike-btn.active {
-  background: #e74c3c;
-  color: white;
-}
-
-.like-animation {
-  animation: likePulse 0.5s ease-out;
-}
-
-@keyframes likePulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
+    .reactions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      width: 100%;
+    }
+    
+    .like-btn, .dislike-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      min-width: 80px;
+      justify-content: center;
+    }
+    
+    .like-btn {
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+      border: 1px solid #2ecc71;
+    }
+    
+    .dislike-btn {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    
+    .like-btn:hover {
+      background: rgba(46, 204, 113, 0.4);
+    }
+    
+    .dislike-btn:hover {
+      background: rgba(231, 76, 60, 0.4);
+    }
+    
+    .like-btn.active {
+      background: #2ecc71;
+      color: white;
+    }
+    
+    .dislike-btn.active {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .like-animation {
+      animation: likePulse 0.5s ease-out;
+    }
+    
+    @keyframes likePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    /* أنماط عداد الزوار */
+    .visitors-counter {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      margin-top: 15px;
+      border: 1px solid var(--secondary-color);
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .visitors-counter i {
+      color: var(--accent-color);
+    }
+    
+    .stats-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    /* مؤشر الجيروسكوب */
+    .gyro-indicator {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--accent-color);
+    }
+    
+    .gyro-indicator i {
+      margin-left: 5px;
+    }
+    
+    /* تأثيرات الجيروسكوب */
+    .gyro-active {
+      transition: transform 0.1s linear;
+    }
+    
     @media (max-width: 600px) {
       .container {
-        width: 350px;
-        height: 350px;
+        width: 95%;
+        max-width: 350px;
       }
       
       .profile-img-container {
@@ -684,6 +746,16 @@
         right: 5%;
         bottom: 10px;
       }
+      
+      .reactions {
+        gap: 10px;
+      }
+      
+      .like-btn, .dislike-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 70px;
+      }
     }
     
     /* منع تحديد النص */
@@ -693,36 +765,30 @@
       -moz-user-select: none;
       -ms-user-select: none;
     }
-    /* أنماط عداد الزوار */
-.visitors-counter {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 8px 15px;
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  margin-top: 15px;
-  border: 1px solid var(--secondary-color);
-}
-
-.visitors-counter i {
-  color: var(--accent-color);
-}
-
-/* مؤشر الجيروسكوب */
-.gyro-indicator {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  z-index: 1000;
-  display: none;
-}
+    
+    /* تحسينات للشاشات الكبيرة */
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 600px;
+      }
+      
+      .profile-img-container {
+        width: 180px;
+        height: 180px;
+      }
+      
+      .profile-name {
+        font-size: 24px;
+      }
+      
+      .about-me {
+        max-height: 200px;
+      }
+      
+      .about-me p {
+        font-size: 16px;
+      }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
@@ -778,23 +844,27 @@
             مرحباً، أنا محمد مصلح.شغفي هو التكنلوجيا وعالم البرمجه وأسعى دائماً لتطوير مهاراتي.
           </p>
         </div>
-            <!-- عداد الزوار -->
-           <div class="visitors-counter">
+        
+        <div class="stats-container">
+          <!-- عداد الزوار -->
+          <div class="visitors-counter">
             <i class="fas fa-eye"></i>
             <span id="visitorCount">0</span> زائر
-              
-            <div class="reactions">
-              <button class="like-btn" id="likeBtn">
-                <i class="fas fa-thumbs-up"></i>
-                <span id="likeCount">0</span>
-              </button>
-              
-              <button class="dislike-btn" id="dislikeBtn">
-                <i class="fas fa-thumbs-down"></i>
-                <span id="dislikeCount">0</span>
-              </button>
-            </div>
           </div>
+          
+          <!-- أزرار التصويت -->
+          <div class="reactions">
+            <button class="like-btn" id="likeBtn">
+              <i class="fas fa-thumbs-up"></i>
+              <span id="likeCount">0</span>
+            </button>
+            
+            <button class="dislike-btn" id="dislikeBtn">
+              <i class="fas fa-thumbs-down"></i>
+              <span id="dislikeCount">0</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="ball-shadow"></div>
@@ -861,6 +931,7 @@
     let keySequence = [];
     let isGyroActive = false;
     let lastGyroUpdate = 0;
+    let gyroTimeout;
      
     // عناصر التحكم
     const customCursor = document.getElementById('custom-cursor');
@@ -933,8 +1004,6 @@
             <option value="fab fa-linkedin" ${platform === 'fa-linkedin' ? 'selected' : ''}>لينكدإن</option>
             <option value="fab fa-github" ${platform === 'fa-github' ? 'selected' : ''}>جيت هاب</option>
             <option value="fab fa-whatsapp" ${platform === 'fa-whatsapp' ? 'selected' : ''}>واتساب</option>
-            <option value="fab fa-telegram" ${platform === 'fa-telegram' ? 'selected' : ''}>تلغرام</option>
-            <option value="fab fa-reddit" ${platform === 'fa-reddit' ? 'selected' : ''}>ريديت</option>
             <option value="fab fa-pinterest" ${platform === 'fa-pinterest' ? 'selected' : ''}>بينتريست</option>
           </select>
           <input type="text" class="social-input url-input" value="${url}" placeholder="رابط المنصة" data-index="${index}">
@@ -1134,7 +1203,17 @@
           isGyroActive = true;
           gyroIndicator.style.display = 'block';
           customCursor.style.display = 'none';
+          container.classList.add('gyro-active');
         }
+        
+        // إعادة تعيين المهلة لإخفاء المؤشر
+        clearTimeout(gyroTimeout);
+        gyroTimeout = setTimeout(() => {
+          isGyroActive = false;
+          gyroIndicator.style.display = 'none';
+          customCursor.style.display = 'block';
+          container.classList.remove('gyro-active');
+        }, 2000);
         
         // تحويل قيم الجيروسكوب إلى إحداثيات الشاشة
         const screenWidth = window.innerWidth;
@@ -1149,12 +1228,6 @@
         y = Math.max(0, Math.min(screenHeight, y));
         
         updateContainerPosition(x, y);
-      } else {
-        if (isGyroActive) {
-          isGyroActive = false;
-          gyroIndicator.style.display = 'none';
-          customCursor.style.display = 'block';
-        }
       }
     }
 

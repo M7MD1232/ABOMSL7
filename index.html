@@ -1130,25 +1130,7 @@ ption>
       setupReactions();
       setupGyro();
     });
-الغاء المطورين
-document.onkeydown = function(e) {
-  // تعطيل F12
-  if (e.key === 'F12' || e.keyCode === 123) {
-    return false;
-  }
-  // تعطيل Ctrl+Shift+I و Ctrl+Shift+J و Ctrl+Shift+C
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && 
-      (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-    return false;
-  }
-  // تعطيل Ctrl+U (عرض المصدر)
-  if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
-    return false;
-  }
-};
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-});
+
   </script>
 
 </body>
